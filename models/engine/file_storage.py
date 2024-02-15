@@ -5,10 +5,10 @@ serializes our data and stores it in a file
 import models
 from models.base_model import BaseModel
 import json
-from users import Users
+from models.user import User
 
 classes = {
-    "Users": Users,
+    "User": User,
     "BaseModel": BaseModel
   }
 
@@ -24,9 +24,9 @@ class FileStorage:
     """
     sets in __objects_data the obj with key <obj class name>.id
     """
-   if obj:
-     key = obj.__class__.__name__ + "." + obj.id
-     self.__objects_data[key] = obj
+    if obj:
+      key = obj.__class__.__name__ + "." + obj.id
+      self.__objects_data[key] = obj
 
 
   def all(self, cls=None):
@@ -67,11 +67,11 @@ class FileStorage:
         if class_name and class_name in classes:
           class_obj = classes[class_name]
           obj_instance = class_obj(**value)
-          self.__object[key] = obj_instance
+          self.__objects_data[key] = obj_instance
         else:
           print(f"warning: {class_name} not gound in valid class group")
     except FileNotFoundError:
-      printf(f"file {self.__file_path} not found")
+      print(f"file {self.__file_path} not found")
 
 
   def close(self):
@@ -88,10 +88,10 @@ class FileStorage:
       key_to_delete = f"{obj.__class__.__name__}.{obj.id}"
       if key_to_delete in self.__objects_data:
         del self.__objects_dat[key_to_delete]
-    models.storage.save()
+    self.save()
 
 
-  def get(self, cls=None, id):
+  def get(self, cls=None, id=None):
     """
     method to return an obj in objects_data if present based on the class and id
     """
@@ -106,12 +106,10 @@ class FileStorage:
     count the number of objs in a given ckass or whole obj in __objects_data if no class is given
     """
     if cls:
-      cls_dict = {}
-      count = 0
-      for key, value in self.__objects_data:
-        if key.startswith(cls)
-        cls_dict[key] = value
-        count += len(cls_dict)
+      count = len(self.all(cls))
     else:
-      count = len(models.storage.all())
+      count = 0
+      for cl in classes.values():
+        count += len(self.all(cl))
+
     return count

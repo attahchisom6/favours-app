@@ -4,8 +4,8 @@ A model or standard from which other models are defines
 """
 import models
 from sqlalchemy import Column, String, DateTime
-from sqlalchemy.orm.ext import declarative_base
-import datetime
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 import uuid
 
 if models.storage_t == "db":
@@ -13,14 +13,14 @@ if models.storage_t == "db":
 else:
   Base = object
 
-time_format = "%Y-%m-%dT%H%:%M:%S.%f"
+time_format = "%Y-%m-%dT%H:%M:%S.%f"
 
 class BaseModel:
   """
   The Mother or principal class
   """
   id = Column(String(128), primary_key=True)
-  created_at = Column(DataTime, default=datetime.utcnow)
+  created_at = Column(DateTime, default=datetime.utcnow)
   updated_at = Column(DateTime, default=datetime.utcnow)
 
   def __init__(self, *args, **kwargs):
@@ -61,7 +61,7 @@ class BaseModel:
         self.__dict__
       )
 
-  def update_at_attr(self):
+  def save(self):
     """
     update the update_at attribute with the current time
     """
