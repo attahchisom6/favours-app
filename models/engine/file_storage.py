@@ -5,6 +5,7 @@ serializes our data and stores it in a file
 import models
 from models.base_model import BaseModel
 import json
+import jwt
 from models.user import User
 
 classes = {
@@ -47,10 +48,12 @@ class FileStorage:
     serializes data and stores it in a file
     """
     json_dict = {}
-    for key, value in self.__objects_data.items():
-      if key == "password":
-        json_dict[key] = json_dict[key].decode()
-      json_dict[key] = self.__objects_data[key].to_dict(fs_indicator=1)
+    for keyy, value in self.__objects_data.items():
+      json_dict[keyy] = value.to_dict(fs_indicator=1)
+      if hasattr(value, "password"):
+        # Note we encoded password twice in the user class
+        first_jwt_decode = jwt.decode(value.password, key="SECRET", algorithms=["HS256"])
+        json_dict[keyy]["_password"] = jwt.decode(first_jwt_decode.get("password"), key="2nd_SECRET", algorithms=["HS512"])
     with open(self.__file_path, "w") as fw:
       json.dump(json_dict, fw)
 
@@ -60,7 +63,7 @@ class FileStorage:
     """
     try:
       with open(self.__file_path, "r") as f:
-       data = json.load(f)
+        data = json.load(f)
 
       for key, value in data.items():
         class_name, obj_id = key.split(".")
@@ -69,7 +72,7 @@ class FileStorage:
           obj_instance = class_obj(**value)
           self.__objects_data[key] = obj_instance
         else:
-          print(f"warning: {class_name} not gound in valid class group")
+          print(f"warning: {class_name} not found in valid class group")
     except FileNotFoundError:
       print(f"file {self.__file_path} not found")
 
@@ -87,7 +90,7 @@ class FileStorage:
     if obj:
       key_to_delete = f"{obj.__class__.__name__}.{obj.id}"
       if key_to_delete in self.__objects_data:
-        del self.__objects_dat[key_to_delete]
+        del self.__objects_data[key_to_delete]
     self.save()
 
 

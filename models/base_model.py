@@ -67,7 +67,6 @@ class BaseModel:
     """
     setattr(self, "updated_at", datetime.utcnow())
     models.storage.new(self)
-    models.storage.save()
 
   def to_dict(self, fs_indicator=None):
     """
@@ -76,10 +75,10 @@ class BaseModel:
     obj_dict = self.__dict__.copy()
     obj_dict["__class__"] = self.__class__.__name__
 
-    if obj_dict["created_at"]:
+    if obj_dict.get("created_at"):
       obj_dict["created_at"] = obj_dict["created_at"].strftime(time_format)
 
-    if obj_dict["updated_at"]:
+    if obj_dict.get("updated_at"):
       obj_dict["updated_at"] = obj_dict["updated_at"].strftime(time_format)
 
     if "_sa_instance_state" in obj_dict:
