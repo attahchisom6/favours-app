@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+  #!/usr/bin/env python3
 """
 serializes our data and stores it in a file
 """
@@ -53,7 +53,7 @@ class FileStorage:
       if hasattr(value, "password"):
         # Note we encoded password twice in the user class
         first_jwt_decode = jwt.decode(value.password, key="SECRET", algorithms=["HS256"])
-        json_dict[keyy]["_password"] = jwt.decode(first_jwt_decode.get("password"), key="2nd_SECRET", algorithms=["HS512"])
+        json_dict[keyy]["_password"] = jwt.decode(first_jwt_decode.get("password"), key="2nd_SECRET", algorithms=["HS384"])
     with open(self.__file_path, "w") as fw:
       json.dump(json_dict, fw)
 

@@ -33,7 +33,7 @@ def create_instance(cls):
         instance = Cl(**data)
         instance.save()
         storage.save()
-        return jsonify({"message": "instance created successfully"}), 201
+        return jsonify({"message": f"{cls} instance created successfully"}), 201
   else:
     return jsonify({"message": "Cannot create an instance, no data provided"}),201
   
@@ -50,7 +50,8 @@ def update_basemodel_instance(cls, id):
       if hasattr(obj, key):
         setattr(obj, key, value)
     obj.save()
-    return jsonify({"message": "base_model instances updated succesfully"}), 201
+    storage.save()
+    return jsonify({"message": f"{cls} instances updated succesfully"}), 201
   else:
     return jsonify({"message": "instance Missing"}), 404
 

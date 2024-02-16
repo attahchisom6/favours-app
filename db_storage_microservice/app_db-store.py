@@ -3,11 +3,11 @@
 Database storage microservive to manage db operation (manage api's that routes to our database
 """
 from flask import Flask, jsonify, request
-from model.engine.db_storage import DBStorage, classes
+from models.engine.db_storage import DBStorage, classes
 from models.base_model import BaseModel, Base
 
 app = Flask(__name__)
-storage = DBStorag()
+storage = DBStorage()
 storage.reload()
 
 
@@ -51,7 +51,7 @@ def update_object(cls):
     else:
       return jsonify({"message": "No data provided, provide data to update"}), 400
   else:
-    return jsonify("message": "No object in Database availaible for update"}), 404
+    return jsonify({"message": "No object in Database availaible for update"}), 404
 
 @app.route("/delete/<cls>/<id>", methods=["DELETE"], strict_slashes=False)
 def delete_object(cls, id):
