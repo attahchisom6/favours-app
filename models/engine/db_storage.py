@@ -28,7 +28,7 @@ class DBStorage:
     """
     db_user = getenv("FAVOURS_DB_USER")
     password = getenv("FAVOURS_DB_PWD")
-    db_name = getenv("GAVOURS_DB_NAME")
+    db_name = getenv("FAVOURS_DB_NAME")
     host = getenv("FAVOURS_DB_HOST")
     self.__engine = create_engine(
         "mysql+mysqldb://{}:{}@{}/{}".format(
