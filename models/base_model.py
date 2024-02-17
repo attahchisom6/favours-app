@@ -67,6 +67,7 @@ class BaseModel:
     """
     setattr(self, "updated_at", datetime.utcnow())
     models.storage.new(self)
+    models.storage.save()
 
   def to_dict(self, fs_indicator=None):
     """

@@ -1,0 +1,13 @@
+# compose to build our services on independent enviroment
+
+version: '3'
+
+services:
+  file_storage_microservice:
+    build: ./file_storage_microservice
+    port:
+      - "5000:5000"
+  db_storage_microservice:
+    build: ./db_storage_microservice
+    port:
+      - "5001:5000"
