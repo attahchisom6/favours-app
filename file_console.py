@@ -27,6 +27,9 @@ class MicroServices(cmd.Cmd):
   """
   microservice unit class
   """
+
+  # pls note that every instance returned from the file storage is a dictionary whose values are instances of clases
+
   prompt = "(micro_unit) "
 
   def do_EOF(self, line):
@@ -94,10 +97,10 @@ class MicroServices(cmd.Cmd):
             return False
           else:
             print(instance)
-      except:
+      except IndexError:
         print(Err.get("id_missing"))
         return False
-    except:
+    except IndexError:
       print(Err.get("class_missing"))
       return False
 
@@ -125,12 +128,14 @@ class MicroServices(cmd.Cmd):
       print(Err.get("class_missing"))
       return False
 
-    if cls_name:
-      cls_instance = storage.all(cls_name)
-      if cls_instance.get("id") != id:
-        print(Err.get("instancce_missing"))
-      storage.delete(cls_instance)
+    if id and cls_name:
+      instance = storage.get(cls_name, id)
+      if instance:
+        instance.delete()
+      else:
+        print(Err.get("instance_missing"))
       storage.save()
+
 
   def do_all(self, arg):
     """
@@ -159,9 +164,9 @@ class MicroServices(cmd.Cmd):
     print("]")
 
 
-  def update(self, arg):
+  def do_update(self, arg):
     """
-    update an instance with a given attribute with a given value based on its id and name
+    update an instance with a given attribute name to a given value based on its id and class name
     Ex: update BaseModel 1277 email "eome@email"
     Usage:
       update <class> <id> <attr_name> <value>
