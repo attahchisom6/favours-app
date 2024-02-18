@@ -16,6 +16,7 @@ Err = {
     "class_missing": "** class name missing **",
     "exist": " ** class doesn't exist **",
     "id_missing": "** instance id missing **",
+    "instance_missing": "** no instance found **"
   }
 
 class MicroServices(cmd.Cmd):
@@ -87,6 +88,43 @@ class MicroServices(cmd.Cmd):
     cls_instance = classes[cls_name]()
     if cls_instance.id != id:
       print(Err.get("instance_missing"))
+    print(cls_instance)
+
+
+  def do_destroy(self, arg):
+    """
+    deletes an instanccce basedon the id
+    """
+    args = arg.split()
+    command, cls_name, id  = [ag.trim() for ag in args[:3]]
+    if cls_name is None:
+      print(Err.get("class_missing"))
+    elif cls_name not in classes:
+      print(Err.get("exist"))
+
+    if id is None:
+      print(Err.get("id_missing"))
+    cls_instance = classes[cls_name]()
+    if cls_instance.id != id:
+      print(Err.get("instancce_missing"))
+    cls_instance.delete()
+    cls_instance.save()
+
+  def all(self, arg):
+    """
+    all: Prints all string representation of all instances based or not on the class name.
+    Ex: $ all BaseModel or $ all.
+
+    """
+    args = arg.split()
+    command, cls_name = [ag.trim() for ag in args[:2]]
+    if cls_name is None:
+      for cl_n in classes:
+        print(classes[class_name])
+    elif cls_name not in classes:
+      print(Err.get("exist"))
+    print(classes[cls_name])
+
 
 
 if __name__ == "__main__":
