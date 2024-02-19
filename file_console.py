@@ -108,24 +108,29 @@ class MicroServices(cmd.Cmd):
     Usage:
       destroy <class_name> <id>
     """
+    id, cls_name = None, None
     try:
       args = arg.split()
       cls_name = args[0].strip()
       if cls_name and cls_name not in classes:
         print(Err.get("exist"))
+        return False
 
       try:
         id = args[1].strip()
       except IndexError:
         print(Err.get("id_missing"))
-    except ValueError:
+        return False
+    except IndexError:
       print(Err.get("class_missing"))
+      return False
 
-    cls_instance = classes[cls_name]()
-    if cls_instance.id != id:
-      print(Err.get("instancce_missing"))
-    cls_instance.delete()
-    cls_instance.save()
+    if cls_name:
+      cls_instance = storage.all(cls_name)
+      if cls_instance.get("id") != id:
+        print(Err.get("instancce_missing"))
+      storage.delete(cls_instance)
+      storage.save()
 
   def do_all(self, arg):
     """
