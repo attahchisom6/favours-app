@@ -73,8 +73,8 @@ class FileStorage:
           self.__objects_data[key] = obj_instance
         else:
           print(f"warning: {class_name} not found in valid class group")
-    except FileNotFoundError:
-      print(f"file {self.__file_path} not found")
+    except:
+      pass
 
 
   def close(self):

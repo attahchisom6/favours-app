@@ -24,10 +24,10 @@ class User(BaseModel, Base):
     initializing variables
     """
     super().__init__(*args, **kwargs)
-    self.first_name = kwargs.get('first_name', '')
+    """self.first_name = kwargs.get('first_name', '')
     self.last_name = kwargs.get('last_name', '')
     self.email = kwargs.get('email', '')
-    self.password = kwargs.get('password', '')
+    self.password = kwargs.get('password', '')"""
 
 
   @property

@@ -5,7 +5,9 @@ create a console to interact with eah unit or microservice
 from models.base_model import BaseModel
 from models.user import User
 import cmd
-from file_storage_microservice.app_file-store import storage
+from file_storage_microservice.app_file_store import storage
+import os
+import json
 
 classes = {
     "BaseModel": BaseModel,
@@ -16,7 +18,9 @@ Err = {
     "class_missing": "** class name missing **",
     "exist": " ** class doesn't exist **",
     "id_missing": "** instance id missing **",
-    "instance_missing": "** no instance found **"
+    "instance_missing": "** no instance found **",
+    "attr_name": "** attribute name missing **",
+    "attr_value": "** value missing **"
   }
 
 class MicroServices(cmd.Cmd):
@@ -24,6 +28,7 @@ class MicroServices(cmd.Cmd):
   microservice unit class
   """
   prompt = "(micro_unit) "
+
   def do_EOF(self, line):
     """
     exist the program when ctrl + D is pressed
@@ -38,92 +43,148 @@ class MicroServices(cmd.Cmd):
     return True
 
 
-  def do_emptyline(self):
+  def emptyline(self):
     """
     pressing Enter when ths line is empty does not exit the loop
     """
     return False
 
 
-  def do_help(self, line):
-    """
-    document our custom action
-    """
-    print("Documented commands (type help <topic>):\n========================================")
-    print("- type help to understand the commands")
-    print("- EOF: press ctrl + d or type 'EOF' to exit")
-    print("- quit: Type 'quit' to exit")
-    print("- type help to understand the commands")
-
-
   def do_create(self, arg):
     """
     create a class instance and return the id
+    Usage:
+      create <class_name>
     """
-    args = arg.split()
-    command, cls_name = [ag.trim() for ag in args[:2]]
-    if cls_name is None:
+    try:
+      args = arg.split()
+      cls_name = args[0].strip()
+      if cls_name and cls_name not in classes:
+        print(Err.get("exist"))
+        return False
+    except IndexError:
       print(Err.get("class_missing"))
-    elif cls_name not in classes:
-      print(Error.get("exist"))
+      return False
 
-    cls = classes[class_name]
+    cls = classes[cls_name]
     cls_instance = cls()
-    cls.save()
+    cls_instance.save()
+    print(cls_instance.id)
+
 
   def do_show(self, arg):
     """
     prints the string representation of an instance based on classname and id
+      Usage:
+        show <class> <class_id>
     """
-    args = arg.split()
-    command, cls_name, id = [ag.trim() for ag in args[:3]]
-    if cls_name is None:
+    try:
+      args = arg.split()
+      cls_name = args[0].strip()
+      if cls_name and cls_name not in classes:
+        print(Err.get("exist"))
+        return False
+
+      try:
+        id = args[1].strip()
+        if id:
+          instance = storage.get(cls_name, id)
+          if not instance:
+            print(Err.get("instance_missing"))
+            return False
+          else:
+            print(instance)
+      except:
+        print(Err.get("id_missing"))
+        return False
+    except:
       print(Err.get("class_missing"))
-    elif cls_name not in classes:
-      print(Err.get("exists"))
-
-    if id is None:
-      print(Err.get("id_missing"))
-
-    cls_instance = classes[cls_name]()
-    if cls_instance.id != id:
-      print(Err.get("instance_missing"))
-    print(cls_instance)
+      return False
 
 
   def do_destroy(self, arg):
     """
-    deletes an instanccce basedon the id
+    deletes an instanccce based on the classname and id
+    Usage:
+      destroy <class_name> <id>
     """
-    args = arg.split()
-    command, cls_name, id  = [ag.trim() for ag in args[:3]]
-    if cls_name is None:
-      print(Err.get("class_missing"))
-    elif cls_name not in classes:
-      print(Err.get("exist"))
+    try:
+      args = arg.split()
+      cls_name = args[0].strip()
+      if cls_name and cls_name not in classes:
+        print(Err.get("exist"))
 
-    if id is None:
-      print(Err.get("id_missing"))
+      try:
+        id = args[1].strip()
+      except IndexError:
+        print(Err.get("id_missing"))
+    except ValueError:
+      print(Err.get("class_missing"))
+
     cls_instance = classes[cls_name]()
     if cls_instance.id != id:
       print(Err.get("instancce_missing"))
     cls_instance.delete()
     cls_instance.save()
 
-  def all(self, arg):
+  def do_all(self, arg):
     """
     all: Prints all string representation of all instances based or not on the class name.
-    Ex: $ all BaseModel or $ all.
+    Usgage:
+      all <class> or simply all
+        Ex: $ all BaseModel or $ all
+    """
+    instances = None
+    try:
+      args = arg.split()
+      cls_name = args[0].strip()
+      if cls_name and cls_name not in classes:
+        print(Err.get("exist"))
+        return False
+      elif cls_name:
+        instances = storage.all(cls_name)
+    except IndexError:
+      instances = storage.all()
 
+    array = []
+    for value in instances.values():
+      array.append(str(value))
+    print("[", end="")
+    print(", ".join(array), end="")
+    print("]")
+
+
+  def update(self, arg):
+    """
+    update an instance with a given attribute with a given value based on its id and name
+    Ex: update BaseModel 1277 email "eome@email"
+    Usage:
+      update <class> <id> <attr_name> <value>
     """
     args = arg.split()
-    command, cls_name = [ag.trim() for ag in args[:2]]
-    if cls_name is None:
-      for cl_n in classes:
-        print(classes[class_name])
-    elif cls_name not in classes:
-      print(Err.get("exist"))
-    print(classes[cls_name])
+    try:
+      cls_name = args[0].strip()
+      if cls_name not in classes:
+        print(Err.get("exist"))
+      try:
+        id = args[1].strip()
+        cls_instance = classes[cls_name]()
+        if cls_instance.id != id:
+          print(Err.get("instance_missing"))
+          try:
+            attr_name = args[2].strip()
+            try:
+              attr_value = args[3].strip()
+            except:
+              print(Err.get("attr_value"))
+          except:
+            print(Err.get("attr_name"))
+      except:
+        print(Err.get("id_missing"))
+    except ValueError:
+      print(Err.get("class_missing"))
+    setattr(cls_instance, attr_name, attr_value)
+    class_instance.save()
 
 
 
