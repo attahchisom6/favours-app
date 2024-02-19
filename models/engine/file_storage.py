@@ -6,6 +6,7 @@ import models
 from models.base_model import BaseModel
 import json
 import jwt
+from jwt import exceptions
 from models.user import User
 
 classes = {
@@ -52,14 +53,24 @@ class FileStorage:
       json_dict[keyy] = value.to_dict(fs_indicator=1)
       if hasattr(value, "password"):
         # Note we encoded password twice in the user class
-        first_jwt_decode = jwt.decode(value.password, key="SECRET", algorithms=["HS256"])
-        json_dict[keyy]["_password"] = jwt.decode(first_jwt_decode.get("password"), key="2nd_SECRET", algorithms=["HS384"])
+        first_jwt_decode = {}
+        password_obj = value.password
+        if password_obj:
+          try:
+            first_jwt_decode = jwt.decode(password_obj, key="SECRET", algorithms=["HS256"])         
+          except jwt.exceptions.DecodeError:
+            # first_jwt_decode = {}
+            pass
+        try:
+          json_dict[keyy]["_password"] = jwt.decode(first_jwt_decode.get("password"), key="2nd_SECRET", algorithms=["HS384"])
+        except jwt.exceptions.DecodeError:
+          pass
     with open(self.__file_path, "w") as fw:
       json.dump(json_dict, fw)
 
   def reload(self):
     """
-    deserialixes data from the file storage and in objects_data
+    deserialixes data from the file storage backinto objects_data as instances
     """
     try:
       with open(self.__file_path, "r") as f:
