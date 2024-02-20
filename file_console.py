@@ -202,14 +202,13 @@ class MicroServices(cmd.Cmd):
       return False
 
     if instance:
-      if instance.id != id:
-        print(Err.get("instance_missing"))
-        return False
       try:
         setattr(instance, attr_name, attr_value)
       except AttributeError:
         pass
       instance.save()
+    else:
+      print(Err.get("instance_missing"))
 
 
 
