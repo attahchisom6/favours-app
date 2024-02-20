@@ -41,7 +41,7 @@ class MicroServices(cmd.Cmd):
 
   def do_quit(self, line):
     """
-    quit the program
+    quit the program, when the string 'quit' typed and Enter key is pressed
     """
     return True
 
@@ -171,30 +171,46 @@ class MicroServices(cmd.Cmd):
     Usage:
       update <class> <id> <attr_name> <value>
     """
-    args = arg.split()
+    instance = None
+    attr_name, attr_value, id = "", None, None
     try:
+      args = arg.split()
       cls_name = args[0].strip()
-      if cls_name not in classes:
+      if cls_name and cls_name not in classes:
         print(Err.get("exist"))
+        return False
       try:
         id = args[1].strip()
-        cls_instance = classes[cls_name]()
-        if cls_instance.id != id:
-          print(Err.get("instance_missing"))
+        instance_dict = storage.get(cls_name, id)
+        if instance_dict:
+          instance = next(iter(instance_dict.values()))
           try:
             attr_name = args[2].strip()
             try:
               attr_value = args[3].strip()
-            except:
+            except IndexError:
               print(Err.get("attr_value"))
-          except:
+              return False
+          except IndexError:
             print(Err.get("attr_name"))
-      except:
+            return False
+      except IndexError:
         print(Err.get("id_missing"))
-    except ValueError:
+        return False
+    except IndexError:
       print(Err.get("class_missing"))
-    setattr(cls_instance, attr_name, attr_value)
-    class_instance.save()
+      return False
+
+    if instance:
+      if instance.id != id:
+        print(Err.get("instance_missing"))
+        return False
+      try:
+        setattr(instance, attr_name, attr_value)
+      except AttributeError:
+        pass
+      instance.save()
+
 
 
 
