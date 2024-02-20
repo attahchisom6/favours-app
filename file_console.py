@@ -28,7 +28,8 @@ class MicroServices(cmd.Cmd):
   microservice unit class
   """
 
-  # pls note that every instance returned from the file storage is a dictionary whose values are instances of clases
+  # pls note that apart from the get method, every instance returned from the file storage using any other method is a dictionary whose values are instances of clases
+  # The get method returns the instance itself (i.e not a dict, so no keys here), we can get the dictionary representation of the instance using __dict__
 
   prompt = "(micro_unit) "
 
@@ -181,9 +182,8 @@ class MicroServices(cmd.Cmd):
         return False
       try:
         id = args[1].strip()
-        instance_dict = storage.get(cls_name, id)
-        if instance_dict:
-          instance = next(iter(instance_dict.values()))
+        instance = storage.get(cls_name, id)
+        if instance:
           try:
             attr_name = args[2].strip()
             try:
