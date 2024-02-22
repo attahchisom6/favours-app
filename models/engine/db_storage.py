@@ -7,6 +7,7 @@ from models.user import User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import getenv
+import bcrypt
 
 
 classes = {
@@ -46,6 +47,9 @@ class DBStorage:
     """
     add a new object to the database and commit it in ths currenr session
     """
+    if isinstance(obj, User) and obj.password:
+      hashed_password = bcrypt.hashpw(obj.password.encode("utf-8"), bcrypt.gensalt())
+      obj.password = hashed_password.decode("utf-8")
     self.__session.add(obj)
     self.save()
 
