@@ -47,9 +47,9 @@ class DBStorage:
     """
     add a new object to the database and commit it in ths currenr session
     """
-    if isinstance(obj, User) and obj.password:
+    """if isinstance(obj, User) and obj.password:
       hashed_password = bcrypt.hashpw(obj.password.encode("utf-8"), bcrypt.gensalt())
-      obj.password = hashed_password.decode("utf-8")
+      obj.password = hashed_password.decode("utf-8")"""
       print(f"hashed_password: {obj.password}")
       print(f'len_hashed_password: {len(obj.password)}')
     self.__session.add(obj)
