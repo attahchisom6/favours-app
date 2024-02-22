@@ -43,6 +43,7 @@ class User(BaseModel, Base):
     """
     method to hash the password in jwt
     """
-    # if name == "password":
-      # value = jwt.encode({name: value}, key="2nd_SECRET", algorithm="HS384")
+    if models.storage_t != "db":
+      if name == "password":
+        value = jwt.encode({name: value}, key="2nd_SECRET", algorithm="HS384")
     super().__setattr__(name, value)
