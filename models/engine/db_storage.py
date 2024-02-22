@@ -50,6 +50,7 @@ class DBStorage:
     if isinstance(obj, User) and obj.password:
       hashed_password = bcrypt.hashpw(obj.password.encode("utf-8"), bcrypt.gensalt())
       obj.password = hashed_password.decode("utf-8")
+      print(f"hashed_password: {obj.password}")
     self.__session.add(obj)
     self.save()
 
