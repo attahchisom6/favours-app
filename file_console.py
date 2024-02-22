@@ -5,9 +5,12 @@ create a console to interact with eah unit or microservice
 from models.base_model import BaseModel
 from models.user import User
 import cmd
-from file_storage_microservice.app_file_store import storage
+# from file_storage_microservice.app_file_store import storage
+from models import storage
 import os
 import json
+import re
+import ast
 
 classes = {
     "BaseModel": BaseModel,
@@ -22,6 +25,40 @@ Err = {
     "attr_name": "** attribute name missing **",
     "attr_value": "** value missing **"
   }
+
+
+def strip_quotes(text):
+  """
+  strip a double quote " from beginning and ending of a text
+  """
+  return re.sub(r'^\"|\"$', '', text)
+
+
+def param_list_parser(params: list) -> dict:
+  """
+  parse a list into dictionary
+  """
+  dictt = {}
+  if params is None:
+    return dictt
+
+  for param in params:
+    if "=" in param:
+      key, value = param.split("=", 1)
+      if value.startswith('"') and value.endswith('"'):
+        value = strip_quotes(value).replace("_", " ")
+      else:
+        try:
+          value = int(value)
+        except:
+          try:
+            value = float(value)
+          except:
+            pass
+      dictt[key] = value
+  return dictt
+
+
 
 class MicroServices(cmd.Cmd):
   """
@@ -60,6 +97,7 @@ class MicroServices(cmd.Cmd):
     Usage:
       create <class_name>
     """
+    kwargs = {}
     try:
       args = arg.split()
       cls_name = args[0].strip()
@@ -70,8 +108,15 @@ class MicroServices(cmd.Cmd):
       print(Err.get("class_missing"))
       return False
 
+    try:
+      params = [ag.strip() for ag in arg.split()[1:]]
+      if params:
+        kwargs = param_list_parser(params)
+    except IndexError:
+      pass
+    
     cls = classes[cls_name]
-    cls_instance = cls()
+    cls_instance = cls(**kwargs)
     cls_instance.save()
     print(cls_instance.id)
 
@@ -90,7 +135,7 @@ class MicroServices(cmd.Cmd):
         return False
 
       try:
-        id = args[1].strip()
+        id = strip_quotes(args[1].strip())
         if id:
           instance = storage.get(cls_name, id)
           if not instance:
@@ -121,7 +166,7 @@ class MicroServices(cmd.Cmd):
         return False
 
       try:
-        id = args[1].strip()
+        id = strip_quotes(args[1].strip())
       except IndexError:
         print(Err.get("id_missing"))
         return False
@@ -172,8 +217,8 @@ class MicroServices(cmd.Cmd):
     Usage:
       update <class> <id> <attr_name> <value>
     """
-    instance = None
-    attr_name, attr_value, id = "", None, None
+    # instance = None
+    # attr_name, attr_value, id = "", None, None
     try:
       args = arg.split()
       cls_name = args[0].strip()
@@ -181,19 +226,34 @@ class MicroServices(cmd.Cmd):
         print(Err.get("exist"))
         return False
       try:
-        id = args[1].strip()
+        id = strip_quotes(args[1].strip())
         instance = storage.get(cls_name, id)
         if instance:
           try:
-            attr_name = args[2].strip()
+            attr_name = strip_quotes(args[2].strip())
             try:
-              attr_value = args[3].strip()
+              attr_value = strip_quotes(args[3].strip())
             except IndexError:
               print(Err.get("attr_value"))
               return False
           except IndexError:
             print(Err.get("attr_name"))
             return False
+          try:
+            attr_type = type(getattr(instance, attr_name))
+            if attr_type is int:
+              attr_value = int(attr_value)
+            elif attr_type == float:
+              attr_value = float(attr_value)
+            else:
+              attr_value = attr_value
+            if hasattr(instance, attr_name):
+              setattr(instance, attr_name, attr_value)
+          except AttributeError:
+            pass
+          instance.save()
+        else:
+          print(Err.get("instance_missing"))
       except IndexError:
         print(Err.get("id_missing"))
         return False
@@ -201,16 +261,100 @@ class MicroServices(cmd.Cmd):
       print(Err.get("class_missing"))
       return False
 
-    if instance:
-      try:
-        setattr(instance, attr_name, attr_value)
-      except AttributeError:
-        pass
-      instance.save()
+
+  def do_count(self, arg):
+    """
+    count the number of instances in a given class, else all the instances
+    """
+    count = 0
+    try:
+      args = arg.split()
+      cls_name = args[0].strip()
+      if cls_name and cls_name not in classes:
+        print(Err.get("exist"))
+        return False
+      elif cls_name:
+        count = storage.count(cls_name)
+    except IndexError:
+      count = storage.count()
+    print(count)
+
+
+  def default(self, arg):
+    """
+    handle new ways of executing cmd commands
+    the default method in cmd handles unrecognized commands or input (that's is command not defined earlier
+    Usages:
+      <class_name>.all()
+      <class_name>.create()
+      <class_name>".show(<id>)
+      <class_name>.destroy(<id>)
+      <class_name>.update(<id>, <**kwargs i.e dict_representation>)
+      <class_name>.count()
+    """
+    valid_commands = {
+        "all": self.do_all,
+        "create": self.do_create,
+        "show": self.do_show,
+        "destroy": self.do_destroy,
+        "update": self.do_update,
+        "count": self.do_count
+      }
+
+    line = ""
+    command = ""
+    update_items = []
+
+    arg = arg.strip()
+    values = arg.split(".", 1)
+    # check if thare is only single doit, if not default to 
+    if len(values) != 2:
+      cmd.Cmd.default(self, arg)
+      return False
+
+    cls_name = values[0]
+    command = values[1]
+
+    if command.endswith("()"):
+      command = command[:-2]
+      if cls_name in classes and command in valid_commands:
+        if command == "all" or command == "count" or command == "create":
+          line  = f"{cls_name}"
+
+    elif re.match(r'(.+)\((.+)\)', command):
+      groups = re.match(r'(.+)\((.+)\)', command)
+      command = groups[1]
+      id_or_dict = groups[2]
+
+      if cls_name in classes and command in valid_commands:
+        if command == "show" or command == "destroy":
+          line = f"{cls_name} {id_or_dict}"
+        
+        elif command == "update":
+          id_or_dict_match = re.match('^(.+), (\{.*\})$', id_or_dict)
+          if id_or_dict_match:
+            id, str_dict = id_or_dict_match.groups()
+            if str_dict:
+              dictt = ast.literal_eval(str_dict)
+              if dictt:
+                for attr_name, attr_value in dictt.items():
+                  line = f"{cls_name} {id} {attr_name} {attr_value}"
+                  update_items.append(line)
+        else:
+          return False
+    
     else:
-      print(Err.get("instance_missing"))
+      return False
 
+    if update_items:
+      for line in update_items:
+        valid_commands[command](line)
+      update_items = []
 
+    try:
+      valid_commands[command](line)
+    except:
+      return False
 
 
 if __name__ == "__main__":

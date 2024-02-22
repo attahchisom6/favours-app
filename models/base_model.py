@@ -8,10 +8,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import uuid
 
-# if models.storage_t = "db"
-Base = declarative_base()
-# else:
-  # Base = object
+if models.storage_t == "db":
+  Base = declarative_base()
+else:
+  Base = object
 
 time_format = "%Y-%m-%dT%H:%M:%S.%f"
 
@@ -55,10 +55,11 @@ class BaseModel:
     """
     returns a string representation of BaseModel instances
     """
+    dict_repr = {key: value for key, value in self.__dict__.items() if key != '_sa_instance_state'}
     return "[{:s}] ({:s}) {}".format(
         self.__class__.__name__,
         self.id,
-        self.__dict__
+        dict_repr
       )
 
   def save(self):

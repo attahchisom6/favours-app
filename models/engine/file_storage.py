@@ -123,7 +123,7 @@ class FileStorage:
       count = len(self.all(cls))
     else:
       count = 0
-      for cl in classes.values():
+      for cl in classes:
         count += len(self.all(cl))
 
     return count
