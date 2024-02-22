@@ -2,6 +2,7 @@
 """
 Database interaction and Management module
 """
+import models
 from models.base_model import BaseModel, Base
 from models.user import User
 from sqlalchemy import create_engine
