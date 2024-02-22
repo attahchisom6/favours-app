@@ -2,6 +2,7 @@
 """
 Define the users platform
 """
+import models
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, LargeBinary
 import jwt
