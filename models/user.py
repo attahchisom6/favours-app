@@ -3,7 +3,7 @@
 Define the users platform
 """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Text
 import jwt
 
 
@@ -14,7 +14,7 @@ class User(BaseModel, Base):
   __tablename__ = "users"
   first_name = Column(String(128), nullable=True)
   last_name = Column(String(128), nullable=True)
-  _password = Column("password", String(1000000), nullable=False)
+  _password = Column("password", Text, nullable=False)
   email = Column(String(128), nullable=False)
   
 
