@@ -51,7 +51,7 @@ class DBStorage:
       hashed_password = bcrypt.hashpw(obj.password.encode("utf-8"), bcrypt.gensalt())
       obj.password = hashed_password.decode("utf-8")
       print(f"hashed_password: {obj.password}")
-      print(f'len_hashed_password: {len(obj.password}')
+      print(f'len_hashed_password: {len(obj.password)}')
     self.__session.add(obj)
     self.save()
 
