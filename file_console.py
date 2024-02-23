@@ -282,13 +282,16 @@ class MicroServices(cmd.Cmd):
 
   def do_reload(self, arg):
     """
-    reloads a module to include any changes made in it
+    reloads a module to include any changes made in it.
     Usages:
       reload <module1> <module2> ...
     """
     modules = []
     try:
       file_names = arg.split()
+      if not file_names:
+        print("No files provided for reload")
+
       for file in file_names:
         try:
           module = importlib.import_module(file.strip())
@@ -296,10 +299,18 @@ class MicroServices(cmd.Cmd):
             modules.append(module)
           else:
             print(f"Cannot import {module}")
-        except IndexError:
-          pass
+        except FileNotFoundError:
+          print(f"module not found: {file}")
+        except ImportError:
+          print(f"Error importing module: {file}")
     except IndexError:
-      return False
+      print("Invalid usage of reload command.")
+    
+    for module in modules:
+      try:
+        importlib.reload(module)
+      except Exception as e:
+        print(f"Cannot reload {module} module: {e}")
 
 
   def default(self, arg):
@@ -322,7 +333,7 @@ class MicroServices(cmd.Cmd):
         "destroy": self.do_destroy,
         "update": self.do_update,
         "count": self.do_count,
-        "reload": self.reload
+        "reload": self.do_reload
       }
 
     line = ""
@@ -367,7 +378,7 @@ class MicroServices(cmd.Cmd):
         else:
           return False
     
-    elif re.match(r'reload(.+)', password):
+    elif re.match(r'reload(.+)', command):
       command = "reload"
       array = re.match(r"reload(.+)", command).group(1)
       if cls_name == "File":
