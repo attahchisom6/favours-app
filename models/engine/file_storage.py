@@ -6,7 +6,6 @@ import models
 from models.base_model import BaseModel
 import json
 import jwt
-from jwt import exceptions
 from models.user import User
 
 classes = {

@@ -5,12 +5,13 @@ create a console to interact with eah unit or microservice
 from models.base_model import BaseModel
 from models.user import User
 import cmd
-# from file_storage_microservice.app_file_store import storage
-from models import storage
+from file_storage_microservice.app_file_store import storage
+# from models import storage
 import os
 import json
 import re
 import ast
+import importlib
 
 classes = {
     "BaseModel": BaseModel,
@@ -279,6 +280,27 @@ class MicroServices(cmd.Cmd):
       count = storage.count()
     print(count)
 
+  def do_reload(self, arg):
+    """
+    reloads a module to include any changes made in it
+    Usages:
+      reload <module1> <module2> ...
+    """
+    modules = []
+    try:
+      file_names = arg.split()
+      for file in file_names:
+        try:
+          module = importlib.import_module(file.strip())
+          if module:
+            modules.append(module)
+          else:
+            print(f"Cannot import {module}")
+        except IndexError:
+          pass
+    except IndexError:
+      return False
+
 
   def default(self, arg):
     """
@@ -291,6 +313,7 @@ class MicroServices(cmd.Cmd):
       <class_name>.destroy(<id>)
       <class_name>.update(<id>, <**kwargs i.e dict_representation>)
       <class_name>.count()
+      File.reload(module1, module2, ...)
     """
     valid_commands = {
         "all": self.do_all,
@@ -298,7 +321,8 @@ class MicroServices(cmd.Cmd):
         "show": self.do_show,
         "destroy": self.do_destroy,
         "update": self.do_update,
-        "count": self.do_count
+        "count": self.do_count,
+        "reload": self.reload
       }
 
     line = ""
@@ -343,6 +367,12 @@ class MicroServices(cmd.Cmd):
         else:
           return False
     
+    elif re.match(r'reload(.+)', password):
+      command = "reload"
+      array = re.match(r"reload(.+)", command).group(1)
+      if cls_name == "File":
+        line = " ".join(array)
+
     else:
       return False
 
