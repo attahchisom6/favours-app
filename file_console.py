@@ -290,11 +290,15 @@ class MicroServices(cmd.Cmd):
     try:
       file_names = arg.split()
       if not file_names:
-        print("No files provided for reload")
+        print("No files provided for reloading")
 
       for file in file_names:
         try:
-          module = importlib.import_module(file.strip())
+          """module_name, _, package_name = file.rpartition("/")
+          if not package_name:
+            package_name = None
+          module_name = module_name.replace("/", ".")"""
+          module = importlib.import_module(file)
           if module:
             modules.append(module)
           else:
@@ -309,6 +313,7 @@ class MicroServices(cmd.Cmd):
     for module in modules:
       try:
         importlib.reload(module)
+        print(f"reloaded module {module.__name__} successfully")
       except Exception as e:
         print(f"Cannot reload {module} module: {e}")
 
@@ -342,7 +347,7 @@ class MicroServices(cmd.Cmd):
 
     arg = arg.strip()
     values = arg.split(".", 1)
-    # check if thare is only single doit, if not default to 
+    # check if thare is only single dot, if not default to 
     if len(values) != 2:
       cmd.Cmd.default(self, arg)
       return False
@@ -378,11 +383,11 @@ class MicroServices(cmd.Cmd):
         else:
           return False
     
-    elif re.match(r'reload(.+)', command):
-      command = "reload"
-      array = re.match(r"reload(.+)", command).group(1)
-      if cls_name == "File":
-        line = " ".join(array)
+      elif cls_name == "File" and command == "reload":
+        str_array = id_or_dict
+        array_items = str_array.split(", ")
+        if array_items:
+          line = " ".join(array_items)
 
     else:
       return False

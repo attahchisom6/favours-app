@@ -7,7 +7,7 @@ from models.user import User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import getenv
-import bcrypt
+# import bcrypt
 
 
 classes = {
@@ -60,13 +60,31 @@ class DBStorage:
     """
     return all instances from rhe database
     """
-    if cls:
-      return self.__session.query(cls).all()
-    all_objs = {}
-    for cl in classes.values():
-      obj = self.__session.query(cl).all()
-      all_objs[cl.__name__] = obj
-    return all_objs
+    obj_items = {}
+
+    def parse_objs(objs: object) -> dict:
+      """
+      parse an obj in the dictionary format we want
+      """
+      obj_list = []
+
+      if objs is None:
+        return obj_dict
+      for obj in obj_dict:
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        obj_dict[key] = obj
+      return obj_dict
+
+    if cls and cls in classes.values():
+      objs = self.__session.query(cls).all()
+      obl_list.append(parse(objs))
+    else:
+      for cl in classes.values():
+        objs = self.__session.query(cl).all()
+        obj_list.append(parse_objs(objs))
+    print("[", end="")
+    print(", ".join(obj_list))
+    print("]")
 
 
   def save(self):
