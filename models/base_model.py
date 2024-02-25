@@ -19,9 +19,10 @@ class BaseModel:
   """
   The Mother or principal class
   """
-  id = Column(String(128), primary_key=True)
-  created_at = Column(DateTime, default=datetime.utcnow)
-  updated_at = Column(DateTime, default=datetime.utcnow)
+  if models.storage_t == "db";
+    id = Column(String(128), primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
 
   def __init__(self, *args, **kwargs):
     """
