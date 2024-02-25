@@ -11,7 +11,7 @@ from models import storage
 """db_user = getenv("FAVOURS_DB_USER")
 db_password = getenv("FAVOURS_DB_PWD")
 db_name = getenv("FAVOURS_DB_NAME")
-db_host = getenv("FAVOURS_DB_HOST")
+db_host = getenv("FAVOURS_DB_HOST")"""
 
 app = Flask(__name__)
 storage = DBStorage(
@@ -20,7 +20,7 @@ storage = DBStorage(
     db_host=db_host,
     db_name=db_name
   )
-storage.reload()"""
+# storage.reload()
 
 
 @app.route("/get_obj", methods=["GET"], strict_slashes=False)
