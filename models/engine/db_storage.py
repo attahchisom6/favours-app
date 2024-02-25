@@ -80,6 +80,7 @@ class DBStorage:
           table = classes[cl].__table__
         except AttributeError:
           print(f"class {classes[cl]} does not provide a table in the database, either its related to a file storage or something else")
+          return False
         objs = self.__session.query(table).all()
         parse_objs(objs)
     return obj_dict
