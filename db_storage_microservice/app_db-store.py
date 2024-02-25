@@ -27,7 +27,7 @@ app = Flask(__name__)
 @app.route("/get_obj", methods=["GET"], strict_slashes=False)
 def get_obj():
   all_objs = storage.all()
-  if all_obj:
+  if all_objs:
     return jsonify({cls: [obj.to_dict() for obj in all_objs.values()]}), 200
 
 
