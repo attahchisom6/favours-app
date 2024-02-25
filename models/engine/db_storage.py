@@ -75,6 +75,7 @@ class DBStorage:
 
     for cl in classes:
       if cls is None or cls is classes[cl] or cls == cl:
+        table = None
         try:
           table = classes[cl].__table__
         except AttributeError:
