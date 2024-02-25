@@ -22,7 +22,7 @@ class DBStorage:
   __session = None
   __engine = None
 
-  def __init__(self) #  db_user=None, db_name=None, db_host=None, db_password=None):
+  def __init__(self): #  db_user=None, db_name=None, db_host=None, db_password=None):
     """
     initializing db variables
     """
