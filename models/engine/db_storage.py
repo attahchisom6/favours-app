@@ -34,7 +34,7 @@ class DBStorage:
     self.__engine = create_engine(
         "mysql+mysqldb://{}:{}@{}/{}".format(
           db_user,
-          password,
+          db_password,
           db_host,
           db_name
         )
