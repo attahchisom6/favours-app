@@ -75,12 +75,12 @@ class DBStorage:
 
     for cl in classes:
       if cls is None or cls is classes[cl] or cls == cl:
-        table = None
+        """table = None
         try:
           table = classes[cl].__table__
         except AttributeError:
-          print(f"class {classes[cl]} does not provide a table in the database, either its related to a file storage or something else")
-        objs = self.__session.query(table).all()
+          print(f"class {classes[cl]} does not provide a table in the database, either its related to a file storage or something else")"""
+        objs = self.__session.query(classes[cl]).all()
         parse_objs(objs)
     return obj_dict
 
