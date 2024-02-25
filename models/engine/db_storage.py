@@ -11,7 +11,6 @@ from os import getenv
 
 
 classes = {
-    "BaseModel": BaseModel,
     "User": User
   }
 

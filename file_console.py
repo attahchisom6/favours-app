@@ -14,6 +14,7 @@ import ast
 import importlib
 
 classes = {
+    "BaseModel": BaseModel,
     "User": User,
   }
 
