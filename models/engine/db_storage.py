@@ -60,31 +60,27 @@ class DBStorage:
     """
     return all instances from rhe database
     """
-    obj_items = {}
+    obj_dict = {}
 
-    def parse_objs(objs: object) -> dict:
+    def parse_objs(objs):
       """
       parse an obj in the dictionary format we want
       """
-      obj_list = []
-
       if objs is None:
         return obj_dict
-      for obj in obj_dict:
+      for obj in objs:
         key = f"{obj.__class__.__name__}.{obj.id}"
         obj_dict[key] = obj
       return obj_dict
 
     if cls and cls in classes.values():
       objs = self.__session.query(cls).all()
-      obl_list.append(parse(objs))
+      return parse_objs(objs)
     else:
       for cl in classes.values():
         objs = self.__session.query(cl).all()
-        obj_list.append(parse_objs(objs))
-    print("[", end="")
-    print(", ".join(obj_list))
-    print("]")
+        parse_objs(objs)
+      return obj_dict
 
 
   def save(self):
