@@ -73,14 +73,11 @@ class DBStorage:
         obj_dict[key] = obj
       return obj_dict
 
-    if cls and cls in classes.values():
-      objs = self.__session.query(cls).all()
-      return parse_objs(objs)
-    else:
-      for cl in classes.values():
-        objs = self.__session.query(cl).all()
+    for cl in classes:
+      if cls is None or cls is classes[cl] or cls == cl:
+        objs = self.__session.query(classes[cl]).all()
         parse_objs(objs)
-      return obj_dict
+    return obj_dict
 
 
   def save(self):
