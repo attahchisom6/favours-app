@@ -68,4 +68,7 @@ def delete_object(cls, id):
 
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=5000, debug=True)
+  if models.storage_t == "db":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+  else:
+    print('App can only run in "db" enviroment')
