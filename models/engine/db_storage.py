@@ -11,7 +11,6 @@ from os import getenv
 
 
 classes = {
-    "BaseModel": BaseModel,
     "User": User
   }
 
@@ -75,12 +74,7 @@ class DBStorage:
 
     for cl in classes:
       if cls is None or cls is classes[cl] or cls == cl:
-        table = None
-        try:
-          table = classes[cl].__table__
-        except AttributeError:
-          print(f"class {classes[cl]} does not provide a table in the database, either its related to a file storage or something else")
-          return
+        table = classes[cl].__table__
         objs = self.__session.query(table).all()
         parse_objs(objs)
     return obj_dict
