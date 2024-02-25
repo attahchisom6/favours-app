@@ -22,19 +22,20 @@ class DBStorage:
   __session = None
   __engine = None
 
-  def __init__(self):
+  def __init__(self, db_user=None, db_name=None, , db_host=None, db_password=None):
     """
     initializing db variables
     """
-    db_user = getenv("FAVOURS_DB_USER")
-    password = getenv("FAVOURS_DB_PWD")
-    db_name = getenv("FAVOURS_DB_NAME")
-    host = getenv("FAVOURS_DB_HOST")
+    if db_user is None and db_name is None and db_host is None and db_password is None:
+      db_user = getenv("FAVOURS_DB_USER")
+      db_password = getenv("FAVOURS_DB_PWD")
+      db_name = getenv("FAVOURS_DB_NAME")
+      db_host = getenv("FAVOURS_DB_HOST")
     self.__engine = create_engine(
         "mysql+mysqldb://{}:{}@{}/{}".format(
           db_user,
           password,
-          host,
+          db_host,
           db_name
         )
       )

@@ -5,9 +5,20 @@ Database storage microservive to manage db operation (manage api's that routes t
 from flask import Flask, jsonify, request
 from models.engine.db_storage import DBStorage, classes
 from models.base_model import BaseModel, Base
+from os import getenv
+
+db_user = getenv("FAVOURS_DB_USER")
+db_password = getenv("FAVOURS_DB_PWD")
+db_name = getenv("FAVOURS_DB_NAME")
+db_host = getenv("FAVOURS_DB_HOST")
 
 app = Flask(__name__)
-storage = DBStorage()
+storage = DBStorage(
+    db_user=db_user,
+    db_password=db_password,
+    db_host=db_host,
+    db_name=db_name
+  )
 storage.reload()
 
 
