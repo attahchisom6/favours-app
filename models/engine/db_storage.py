@@ -116,15 +116,10 @@ class DBStorage:
     """
     get an item from the database
     """
-    #if cls not in classes.values():
-      # return None
-    # table = classes[cls].__table__
-    # return self.__session.query(table).filter_by(id=id).first()
-    all_obj = self.all(cls)
-    for obj in all_obj.values():
-      if obj.id == id:
-        return obj
-    return None
+    if cls not in classes.values():
+      return None
+    table = classes[cls].__table__
+    return self.__session.query(table).filter_by(id=id).first()
 
 
   def count(self, cls=None):
