@@ -252,7 +252,7 @@ class MicroServices(cmd.Cmd):
               setattr(instance, attr_name, attr_value)
           except AttributeError:
             pass
-          instance.save()
+          storage.save()
         else:
           print(Err.get("instance_missing"))
       except IndexError:
