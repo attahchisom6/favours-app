@@ -64,7 +64,7 @@ def update_object(cls, id):
       for key, value in data.items():
         if hasattr(obj, key):
           print("{obj} has key {key} and value {value}")
-          obj[key] = value # setattr(obj, key, vavue
+          setattr(obj, key, value)
       storage.save()
       return jsonify({"message": f"{cls} instance updated succesfully"}), 201
     else:

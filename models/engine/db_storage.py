@@ -53,7 +53,6 @@ class DBStorage:
       print(f"hashed_password: {obj.password}")
       print(f'len_hashed_password: {len(obj.password)}')"""
     self.__session.add(obj)
-    self.save()
 
 
   def all(self, cls=None):
@@ -117,8 +116,15 @@ class DBStorage:
     """
     get an item from the database
     """
-    table = classes.get(cls).__table__
+    if cls not in classes.values():
+      return None
+    table = classes[cls].__table__
     return self.__session.query(table).filter_by(id=id).first()
+    """all_obj = models.storage.all(cls)
+    for obj in all_obj.value():
+      if obj.id == id:
+        return obj
+    return None"""
 
 
   def count(self, cls=None):
