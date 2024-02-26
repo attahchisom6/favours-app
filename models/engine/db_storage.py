@@ -121,7 +121,7 @@ class DBStorage:
     # table = classes[cls].__table__
     # return self.__session.query(table).filter_by(id=id).first()
     all_obj = self.all(cls)
-    for obj in all_obj.value():
+    for obj in all_obj.values():
       if obj.id == id:
         return obj
     return None
