@@ -120,7 +120,7 @@ class DBStorage:
       # return None
     # table = classes[cls].__table__
     # return self.__session.query(table).filter_by(id=id).first()
-    all_obj = models.storage.all(cls)
+    all_obj = self.all(cls)
     for obj in all_obj.value():
       if obj.id == id:
         return obj
