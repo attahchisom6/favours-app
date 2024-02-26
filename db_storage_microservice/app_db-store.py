@@ -53,7 +53,7 @@ def create_object(cls):
 
 
 @app.route("/update/<cls>/<id>", methods=["PUT"], strict_slashes=False)
-def update_object(cls):
+def update_object(cls, id):
   """
   create object and store them in the database
   """
