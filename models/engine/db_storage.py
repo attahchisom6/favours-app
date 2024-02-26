@@ -116,8 +116,8 @@ class DBStorage:
     """
     get an item from the database
     """
-    if cls not in classes.values():
-      return None
+    #if cls not in classes.values():
+      # return None
     # table = classes[cls].__table__
     # return self.__session.query(table).filter_by(id=id).first()
     all_obj = models.storage.all(cls)
