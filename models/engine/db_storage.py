@@ -117,7 +117,8 @@ class DBStorage:
     """
     get an item from the database
     """
-    return self.__session.query(cls).filter_by(id=id).first()
+    table = classes.get(cls).__table__
+    return self.__session.query(table).filter_by(id=id).first()
 
 
   def count(self, cls=None):
