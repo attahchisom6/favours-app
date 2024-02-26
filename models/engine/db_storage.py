@@ -117,7 +117,10 @@ class DBStorage:
     get an item from the database
     """
     table = classes[cls].__table__
-    return self.__session.query(table).filter_by(id=id).first()
+    if table is not None:
+      return self.__session.query(table).filter_by(id=id).first()
+    else:
+      return None
 
 
   def count(self, cls=None):
