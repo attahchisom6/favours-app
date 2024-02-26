@@ -64,7 +64,8 @@ def update_object(cls, id):
       for key, value in data.items():
         if hasattr(obj, key):
           setattr(obj, key, value)
-          return jsonify({"message": f"{cls} instance updated succesfully"}), 201
+      storage.save()
+      return jsonify({"message": f"{cls} instance updated succesfully"}), 201
     else:
       return jsonify({"message": "No data provided, provide data to update"}), 400
   else:
