@@ -24,14 +24,18 @@ app = Flask(__name__)
 # storage.reload()
 
 
-@app.route("/get_obj", methods=["GET"], strict_slashes=False)
+@app.route("/objects", methods=["GET"], strict_slashes=False)
 def get_obj():
-  all_objs = storage.all()
+  cls = request.args.get("cls")
+  if cls:
+    all_objs = storage.all(cls)
+  else:
+    all_objs = storage.all()
   if all_objs:
-    return jsonify({cls: [obj.to_dict() for obj in all_objs.values()]}), 200
+    return jsonify({cls: obj for obj in all_objs}), 200
 
 
-@app.route("/create", methods=["POST"], strict_slashes=False)
+@app.route("/create/<cls>", methods=["POST"], strict_slashes=False)
 def create_object(cls):
   """
   creates an object/instance of the specified class cls and store it in the database
@@ -81,7 +85,7 @@ def delete_object(cls, id):
 
 
 if __name__ == "__main__":
-  #if models.storage_t == "db":
-  app.run(host="0.0.0.0", port=5000, debug=True)
-  # else:
-    # print('App can only run in "db" enviroment')
+  if models.storage_t == "db":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+  else:
+    print('App can only run in "db" enviroment')
