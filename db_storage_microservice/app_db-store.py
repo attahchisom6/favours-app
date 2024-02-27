@@ -32,8 +32,8 @@ def get_obj():
   if cls:
     if id:
       obj = storage.get(cls, id)
-    else
-    all_objs = storage.all(cls)
+    else:
+      all_objs = storage.all(cls)
   else:
     all_objs = storage.all()
 
