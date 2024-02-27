@@ -28,21 +28,23 @@ app = Flask(__name__)
 def get_obj():
   args = request.args
   cls, id = args.get("cls"), args.get("id")
-  obj, all_objs = None, None
+
   if cls:
     if id:
       obj = storage.get(cls, id)
+      if obj:
+        return jsonify({f"{obj.__class__.__name__}.{obj.id}": obj.to_dict()})
+      else:
+        return jsonify({"message": f"{cls} object not available or has been delected"}), 404
     else:
       all_objs = storage.all(cls)
   else:
     all_objs = storage.all()
 
-  if obj:
-    return jsonify({f"{obj.__class__.__name__}.{obj.id}": obj.to_dict()})
-  elif all_objs:
+  if all_objs:
     return jsonify([{key: obj.to_dict()} for key, obj in all_objs.items()])
   else:
-    return None
+    return jsonify({"message": f"No objects fpund"}), 404
 
 
 @app.route("/create/<cls>", methods=["POST"], strict_slashes=False)
