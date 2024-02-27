@@ -38,7 +38,7 @@ def get_obj():
     all_objs = storage.all()
 
   if obj:
-    return jsonify({obj: obj.to_dict()})
+    return jsonify({f"{obj.__class__.__name__}.{obj.id}": obj.to_dict()})
   elif all_objs:
     return jsonify([{key: obj.to_dict()} for key, obj in all_objs.items()])
 
