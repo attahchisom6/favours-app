@@ -250,7 +250,8 @@ class MicroServices(cmd.Cmd):
               attr_value = attr_value
             if hasattr(instance, attr_name):
               setattr(instance, attr_name, attr_value)
-          except AttributeError:
+          except AttributeError as e:
+            print(f"The atrr error: {e}")
             pass
           storage.save()
         else:
