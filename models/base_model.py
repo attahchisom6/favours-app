@@ -88,7 +88,7 @@ class BaseModel:
       del obj_dict["_sa_instance_state"]
 
     if fs_indicator is None:
-      if "password" in obj_dict:
+      if "_password" in obj_dict:
         del obj_dict["password"]
 
     return obj_dict
