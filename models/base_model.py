@@ -89,7 +89,7 @@ class BaseModel:
 
     if fs_indicator is None:
       if "_password" in obj_dict:
-        del obj_dict["password"]
+        del obj_dict["_password"]
 
     return obj_dict
 
