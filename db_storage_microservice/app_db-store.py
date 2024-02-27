@@ -26,13 +26,21 @@ app = Flask(__name__)
 
 @app.route("/objects", methods=["GET"], strict_slashes=False)
 def get_obj():
-  cls = request.args.get("cls")
+  args = request.args
+  cls, id = args.get("cls"), args.get("id")
+  obj, all_objs = None, None
   if cls:
+    if id:
+      obj = storage.get(cls, id)
+    else
     all_objs = storage.all(cls)
   else:
     all_objs = storage.all()
-  if all_objs:
-    return jsonify({cls: obj for obj in all_objs}), 200
+
+  if obj:
+    return jsonify({"obj": obj}), 200
+  elif all_objs:
+    return jsonify({"all_objects": all_objs}), 200
 
 
 @app.route("/create/<cls>", methods=["POST"], strict_slashes=False)

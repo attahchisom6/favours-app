@@ -74,7 +74,7 @@ class DBStorage:
 
     for cl in classes:
       if cls is None or cls is classes[cl] or cls == cl:
-        table = classes[cl].__table__
+        # table = classes[cls].__table__
         objs = self.__session.query(classes[cl]).all()
         parse_objs(objs)
     return obj_dict
@@ -109,6 +109,7 @@ class DBStorage:
     """
     if obj is not None:
       self.__session.delete(obj)
+
 
   def get(self, cls, id):
     """
