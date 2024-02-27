@@ -47,6 +47,21 @@ def get_obj():
     return jsonify({"message": f"No objects fpund"}), 404
 
 
+@app.route("/count", methods=["GET"], strict_slashes=False)
+def count_objects():
+  """
+  return the number of objects in the db, and if cls os given then only the number of objects in cls
+  """
+  count = 0
+  cls = request.args.get("cls")
+  if cls:
+    count = storage.count(cls)
+    return jsonify({f"number of objects in {cls}:": count})
+  else:
+    count = storage.count()
+return jsonify({"number of objects in Db:" count})
+
+
 @app.route("/create/<cls>", methods=["POST"], strict_slashes=False)
 def create_object(cls):
   """
