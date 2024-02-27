@@ -55,6 +55,8 @@ def count_objects():
   count = 0
   cls = request.args.get("cls")
   if cls:
+    if cls not in classes.values():
+      return jsonify({"message": f"No objects in {cls}: Invalid class"}), 400
     count = storage.count(cls)
     return jsonify({f"number of objects in {cls}:": count}), 200
   else:
