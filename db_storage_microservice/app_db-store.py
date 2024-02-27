@@ -38,9 +38,9 @@ def get_obj():
     all_objs = storage.all()
 
   if obj:
-    return obj
+    return jsonify(obj.to_dict())
   elif all_objs:
-    return all_objs
+    return jsonify([obj.to_dict() for obj in all_objs])
 
 
 @app.route("/create/<cls>", methods=["POST"], strict_slashes=False)
