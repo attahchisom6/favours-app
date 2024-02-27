@@ -128,4 +128,4 @@ class DBStorage:
     count the number of objects a class has in the darabase
     """
     db_objects = self.all(cls)
-    return sum(len(objs) for objs in db_objects)
+    return len(db_objects)
