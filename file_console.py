@@ -178,7 +178,7 @@ class MicroServices(cmd.Cmd):
     if id and cls_name:
       instance = storage.get(cls_name, id)
       if instance:
-        instance.delete()
+        storage.delete(instance)
       else:
         print(Err.get("instance_missing"))
       storage.save()
