@@ -103,12 +103,12 @@ class DBStorage:
     self.__session.remove()
 
 
-  def delete(self, obj):
+  def delete(self, obj=None):
     """
     remove an object from db
     """
     found_obj = self.__session.query(obj).filter_by(id=obj.id).first()
-    if found_obj:
+    if found_obj is not None:
       self.__session.delete(found_obj)
       self.save()
 
