@@ -59,7 +59,7 @@ def count_objects():
     return jsonify({f"number of objects in {cls}:": count})
   else:
     count = storage.count()
-return jsonify({"number of objects in Db:": count})
+    return jsonify({"number of objects in Db:": count})
 
 
 @app.route("/create/<cls>", methods=["POST"], strict_slashes=False)
