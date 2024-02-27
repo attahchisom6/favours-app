@@ -42,7 +42,7 @@ def get_obj():
     return jsonify(obj)
   elif all_objs:
     print([obj for obj in all_objs])
-    obj_dict = {key: obj.to_dict() for obj in all_objs.items()}
+    obj_dict = {key: obj.to_dict() for key, obj in all_objs.items()}
     return jsonify(obj_dict)
 
 
