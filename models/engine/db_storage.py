@@ -75,7 +75,7 @@ class DBStorage:
     for cl in classes:
       if cls is None or cls is classes[cl] or cls == cl:
         table = classes[cl].__table__
-        objs = self.__session.query(table).all()
+        objs = self.__session.query(classes[cl]).all()
         parse_objs(objs)
     return obj_dict
 
