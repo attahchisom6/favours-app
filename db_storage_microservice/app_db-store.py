@@ -39,10 +39,10 @@ def get_obj():
 
   if obj:
     print(obj)
-    return jsonify(obj.__dict__)
+    return jsonify(obj)
   elif all_objs:
     print([obj for obj in all_objs])
-    return jsonify([obj.__dict__ for obj in all_objs])
+    return jsonify([obj for obj in all_objs])
 
 
 @app.route("/create/<cls>", methods=["POST"], strict_slashes=False)
