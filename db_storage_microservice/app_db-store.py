@@ -42,8 +42,8 @@ def get_obj():
     return jsonify(obj)
   elif all_objs:
     print([obj for obj in all_objs])
-    obj_dict = {key: obj.to_dict() for key, obj in all_objs.items()}
-    return jsonify([obj_dict])
+    # obj_dict = {key: obj.to_dict() for key, obj in all_objs.items()}
+    return jsonify([key: obj.to_dict() for obj in all_objs.items()])
 
 
 @app.route("/create/<cls>", methods=["POST"], strict_slashes=False)
