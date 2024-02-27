@@ -117,7 +117,7 @@ class DBStorage:
     get an item from the database
     """
     # table = classes[cls].__table__
-    if table is not None:
+    if classes[cls] is not None:
       return self.__session.query(classes[cls]).filter_by(id=id).first()
     else:
       return None
