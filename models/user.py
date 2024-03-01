@@ -38,7 +38,7 @@ class User(BaseModel, Base):
     return self._password
 
   @password.setter
-  def password(self, value):
+  def password(self, password):
     self._password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
 
@@ -56,7 +56,7 @@ class User(BaseModel, Base):
     return bcrypt.checkpw(password.encode("utf-8"), self.password)
 
   @classmethod
-  def search(cls, attributes: dict = {}) -> List(TypeVar("User")):
+  def search(cls, attributes: dict = {}) -> List[TypeVar("User")]:
     """
     searches and gets a user object bassed on the attributes
     """
@@ -70,4 +70,4 @@ class User(BaseModel, Base):
           return False
       return True
 
-    return list(filter(_search, all_objs.values())
+    return list(filter(_search, all_objs.values()))

@@ -6,7 +6,9 @@ from Authentication_microservice.auth.auth import Auth
 from flask import request
 import jwt
 import json
-from os import getenv, path
+from os import getenv
+from models.user import User
+from typing import List, Dict, TypeVar, Tuple
 
 
 class BearerAuth(Auth):
@@ -17,9 +19,9 @@ class BearerAuth(Auth):
 
   def __init__(self):
     super().__init__()
-    self.SECRET_KEY = load_from_env_or_file()
+    self.SECRET_KEY = self.load_from_env_or_file()
 
-  def load_from_env_or_file():
+  def load_from_env_or_file() -> str:
     """
     this method try to first load env config from enviroment, if that's not achieved it loads from a file
     """
@@ -41,10 +43,9 @@ class BearerAuth(Auth):
       except json.JSONDecodeError:
         print(f"{self._config_file} is not a valid json file")
       except Exception as e:
-        print("An error occurred while trying to load this file... : {e]")
+        print(f"An error occurred while trying to load this file... : {e]")
     except EnvironmentError as e:
-      print(f"Cannot load enviroment
-s variables: {e}")
+      print(f"Cannot load enviroments variables: {e}")
       return
     return SECRET_KEY
 
@@ -53,12 +54,15 @@ s variables: {e}")
     """
     extract token from the headers
     """
+    if request is None:
+      return None
+
     token_header = super().authorization_header(request)
     if not token_header:
       return None
 
     jwt_token = token_header.split("Bearer ")[1]
-    if not token or type(jwt_token) is not str:
+    if not jwt_token or type(jwt_token) is not str:
       return None
 
     return jwt_token
@@ -67,7 +71,7 @@ s variables: {e}")
     """
     decodes the jwt encoded token
     """
-    if token is None or type(token) is not str:
+    if jwt_token is None or type(jwt_token) is not str:
       return None
     try:
       jwt_decoded = jwt.decode(jwt_token, "SECRET", algorithms=['HS384'])
@@ -75,14 +79,14 @@ s variables: {e}")
     except jwt.exceptions.DecodeError:
       return None
 
-  def extract_user_credentials(self, jwt_decoded):
+  def extract_user_credentials(self, jwt_decoded: Dict) -> Tuple:
     """
     extract user credentials from a jwt_decoded token
     """
     if len(jwt_decoded) == 0:
       return None
 
-    email, password = jwt_encoded.get("email"), jwt_decoded.get("password")
+    email, password = jwt_decoded.get("email"), jwt_decoded.get("password")
     return (email, password)
 
   def extract_user_from_credential(self, credentials: tuple) -> TypeVar("User"):
@@ -90,4 +94,19 @@ s variables: {e}")
       return None
 
     email, password = credentials
-    user = User.search({"wm
+    user = User.search({"email": email})
+    if user is not None:
+      if user.is_valid_password(password):
+        return user
+    return None
+  
+  def current_user(self, request=None) -> TypeVar("User"):
+    """
+    return the current authorized user
+    """
+    jwt_token = self.extract_token(request)
+    jwt_decoded = self.decode_token(jwt_token)
+    email, password = self.extract_user_credentials(jwt_decoded=)
+    user = self.extract_user_from_credential(email, password)
+    return user
+
