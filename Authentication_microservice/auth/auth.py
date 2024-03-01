@@ -42,9 +42,9 @@ class Auth:
 
     dictt_header = request.headers
     key = "Authorization"
-    if key not in dictt_headers:
+    if key not in dictt_header:
       return None
-    return dict_headers[key]
+    return dict_header[key]
 
   def current_user(self, request=None) -> TypeVar('User'):
     """
