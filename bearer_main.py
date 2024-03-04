@@ -15,7 +15,7 @@ b = BearerAuth()
 print(b.extract_user_from_credentials(None, None))
 print(b.extract_user_from_credentials("pas", None))
 print(b.extract_user_from_credentials(user.email, "i5"))
-print(b.extract_user_from_credentials(user.email, "127oke"))
-assert user.password == "127oke"
+print(b.extract_user_from_credentials(u.email, "127oke"))
+assert u.password == "127oke"
 
 jwt_encoded = jwt.encode(kwargs, "SECRET_KEY", algorithms=["HS384"])
