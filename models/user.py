@@ -60,7 +60,7 @@ class User(BaseModel, Base):
     """
     searches and gets a user object bassed on the attributes
     """
-    all_obj = models.storage.all(cls)
+    all_objs = models.storage.all(cls)
     def _search(obj):
       if len(attributes) == 0:
         return True
