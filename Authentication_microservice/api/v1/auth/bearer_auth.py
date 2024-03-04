@@ -90,7 +90,7 @@ class BearerAuth(Auth):
     return (email, password)
 
   def extract_user_from_credentials(self, email: str = None, password: str = None) -> TypeVar("User"):
-    if not email or passeord:
+    if not email or password:
       return None
 
     if type(email) is not str or type(password) is not str:
