@@ -11,7 +11,7 @@ class Auth:
   """
   parent Authorization class
   """
-  def authorized_paths(self, path: str, excluded_paths: list[str]) -> bool:
+  def authorized_paths(self, path: str, excluded_paths: List[str]) -> bool:
     """
     here every path in  excluded path do not need authorization (i.e isers can use the api without anu authorization needed
     Return:
