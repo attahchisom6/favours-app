@@ -44,7 +44,7 @@ class Auth:
     key = "Authorization"
     if key not in dictt_header:
       return None
-    return dict_header[key]
+    return dictt_header[key]
 
   def current_user(self, request=None) -> TypeVar('User'):
     """
@@ -58,7 +58,7 @@ class Auth:
     """
     if request is None:
       return None
-    SESSION_NAME = os.getenv("SESSION_NAME")
+    SESSION_NAME = getenv("SESSION_NAME")
     if SESSION_NAME is None:
       return None
     return request.cookies.get(SESSION_NAME)

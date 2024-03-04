@@ -71,3 +71,20 @@ class User(BaseModel, Base):
       return True
 
     return list(filter(_search, all_objs.values()))
+
+  def display_name(self):
+    """
+    display names based on email, first_name and last_names
+    """
+    if self.email is None and self.first_name is None and self.last_name is None:
+      return ""
+
+    if not self.first_name and not self.last_name:
+      return self.email
+
+    if not self.first_name:
+      return self.last_name
+    elif not self.last_name:
+      return self.first_name
+    else:
+      return f"{self.first_,name} {self.last_name}"

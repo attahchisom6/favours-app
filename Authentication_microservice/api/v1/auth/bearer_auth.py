@@ -2,13 +2,13 @@
 """
 Bearer Authentication
 """
-from Authentication_microservice.auth.auth import Auth
+from Authentication_microservice.api.v1.auth.auth import Auth
 from flask import request
 import jwt
 import json
 from os import getenv
 from models.user import User
-from typing import List, Dict, TypeVar, Tuple
+from typing import List, Dict, TypeVar, Tuple, Optional
 
 
 class BearerAuth(Auth):
@@ -21,7 +21,7 @@ class BearerAuth(Auth):
     super().__init__()
     self.SECRET_KEY = self.load_from_env_or_file()
 
-  def load_from_env_or_file() -> str:
+  def load_from_env_or_file() -> Optional[str]:
     """
     this method try to first load env config from enviroment, if that's not achieved it loads from a file
     """
@@ -43,9 +43,9 @@ class BearerAuth(Auth):
       except json.JSONDecodeError:
         print(f"{self._config_file} is not a valid json file")
       except Exception as e:
-        print(f"An error occurred while trying to load this file... : {e]")
-    except EnvironmentError as e:
-      print(f"Cannot load enviroments variables: {e}")
+        print(f"An error occurred while trying to load this file... : {e}]")
+    if not SECRET_KEY:
+      print(f"Cannot load enviroments variables")
       return
     return SECRET_KEY
 
@@ -89,11 +89,12 @@ class BearerAuth(Auth):
     email, password = jwt_decoded.get("email"), jwt_decoded.get("password")
     return (email, password)
 
-  def extract_user_from_credential(self, credentials: tuple) -> TypeVar("User"):
-    if credentials is None:
+  def extract_user_from_credentials(self, email: str = None, password: str = None) -> TypeVar("User"):
+    if not email or passeord:
       return None
 
-    email, password = credentials
+    if type(email) is not str or type(password) is not str:
+      return None
     user = User.search({"email": email})
     if user is not None:
       if user.is_valid_password(password):
@@ -106,7 +107,6 @@ class BearerAuth(Auth):
     """
     jwt_token = self.extract_token(request)
     jwt_decoded = self.decode_token(jwt_token)
-    email, password = self.extract_user_credentials(jwt_decoded=)
-    user = self.extract_user_from_credential(email, password)
+    credentials = self.extract_user_credentials(jwt_decoded)
+    user = self.extract_user_from_credentials(credentials)
     return user
-
