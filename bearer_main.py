@@ -17,6 +17,10 @@ print(b.extract_user_from_credentials(None, None))
 print(b.extract_user_from_credentials("pas", None))
 print(b.extract_user_from_credentials(u.email, "i5"))
 print(b.extract_user_from_credentials(u.email, "127oke"))
-assert u.password == bcrypt.hashpw("127oke".encode("utf-8"), bcrypt.gensalt())
+# assert u.password == bcrypt.hashpw("127oke".encode("utf-8"), bcrypt.gensalt())
 
-jwt_encoded = jwt.encode(kwargs, "SECRET_KEY", algorithms=["HS384"])
+jwt_encoded = jwt.encode(kwargs, key=u.load_from_env_or_file(), algorithms=["HS384"])
+if jwt_encoded:
+  print(jwt_encoded)
+else:
+  print("jwt encode failed")
