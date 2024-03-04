@@ -14,7 +14,7 @@ u.save()
 b = BearerAuth()
 print(b.extract_user_from_credentials(None, None))
 print(b.extract_user_from_credentials("pas", None))
-print(b.extract_user_from_credentials(user.email, "i5"))
+print(b.extract_user_from_credentials(u.email, "i5"))
 print(b.extract_user_from_credentials(u.email, "127oke"))
 assert u.password == "127oke"
 
