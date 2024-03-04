@@ -6,7 +6,7 @@ from models.user import User
 from Authentication_microservice.api.v1.auth.bearer_auth import BearerAuth
 import jwt
 
-kwargs = {"first_name": "Okechukwu", "last_name": "Nwanna", "email": "oke@nna.com", "password": "127oke"}
+kwargs = {"first_name": "Okechukwu", "last_name": "Nwanna", "email": "oke@nna.com", User.password: "127oke"}
 
 u = User(**kwargs)
 u.save()
