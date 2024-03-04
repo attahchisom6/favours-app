@@ -5,6 +5,7 @@ test the vearer auth class
 from models.user import User
 from Authentication_microservice.api.v1.auth.bearer_auth import BearerAuth
 import jwt
+import bcrypt
 
 kwargs = {"first_name": "Okechukwu", "last_name": "Nwanna", "email": "oke@nna.com", "password": "127oke"}
 
@@ -16,6 +17,6 @@ print(b.extract_user_from_credentials(None, None))
 print(b.extract_user_from_credentials("pas", None))
 print(b.extract_user_from_credentials(u.email, "i5"))
 print(b.extract_user_from_credentials(u.email, "127oke"))
-assert u.password == "127oke"
+assert u.password == bcrypt.hashpw("127oke".encode("utf-8"), bcrypt.gensalt())
 
 jwt_encoded = jwt.encode(kwargs, "SECRET_KEY", algorithms=["HS384"])
