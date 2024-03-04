@@ -51,7 +51,7 @@ class FileStorage:
     for key, value in self.__objects_data.items():
       json_dict[key] = value.to_dict(fs_indicator=1)
       if key == "_password":
-        json_dict[key] = value.decode("utf-8")
+        json_dict[key] = json_dict[key].decode("utf-8")
     with open(self.__file_path, "w") as fw:
       json.dump(json_dict, fw)
 
