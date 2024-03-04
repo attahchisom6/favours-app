@@ -21,7 +21,7 @@ class BearerAuth(Auth):
     super().__init__()
     self.SECRET_KEY = self.load_from_env_or_file()
 
-  def load_from_env_or_file() -> Optional[str]:
+  def load_from_env_or_file(self) -> Optional[str]:
     """
     this method try to first load env config from enviroment, if that's not achieved it loads from a file
     """
