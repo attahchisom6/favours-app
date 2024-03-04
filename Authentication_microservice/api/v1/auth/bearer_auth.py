@@ -95,10 +95,10 @@ class BearerAuth(Auth):
 
     if type(email) is not str or type(password) is not str:
       return None
-    user = User.search({"email": email})
+    user = User.search({"email": email})[0]
     if user is not None:
       if user.is_valid_password(password):
-        return user
+        return user.to_dict()
     return None
   
   def current_user(self, request=None) -> TypeVar("User"):
