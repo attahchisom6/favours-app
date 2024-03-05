@@ -8,10 +8,10 @@ from flask import jsonify, make_response, abort
 import requests
 
 
-file_url = "0.0.0.0:5000"
-db_url = "0.0.0.0:5001"
+file_url = "http://0.0.0.0:5000"
+db_url = "http://0.0.0.0:5001"
 
-@app_views("/users", methods=["GET"], strict_slashes=False)
+@app_views.route("/users", methods=["GET"], strict_slashes=False)
 def get_all_users():
     """
     return the list of all users in the database
@@ -26,4 +26,4 @@ def get_all_users():
             res = None
     
     if res is not None:
-        print(res.json())
+        return res.json()

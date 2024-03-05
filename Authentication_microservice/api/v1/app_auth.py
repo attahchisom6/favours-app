@@ -67,6 +67,6 @@ def manage_authorized_routes():
 
 
 if __name__ == "__main__":
-  port = getenv("PORT", 5000)
   host = getenv("HOST", "0.0.0.0")
+  port = int(getenv("PORT", "5002"))
   app.run(host=host, port=port, debug=True)

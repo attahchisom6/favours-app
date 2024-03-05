@@ -15,7 +15,7 @@ class BearerAuth(Auth):
   """
   A Bearer auth class to that handles which and which user is authorized access protected routes
   """
-  _config_file = "init.config"
+  _config_file = "config.json"
 
   def __init__(self):
     super().__init__()
@@ -25,29 +25,29 @@ class BearerAuth(Auth):
     """
     this method try to first load env config from enviroment, if that's not achieved it loads from a file
     """
-    SECRET_KEY = None
     try:
-      SECRET_KEY = getenv("SECRET_KEY")
-    except:
-      try:
-        with open(self._config_file, "r") as fr:
-          env_credentials = json.load(fr)
-        if "SECRET_KEY" in env_credentials:
-          SECRET_KEY = env_credentials.get("SECRET_KEY")
+      secret_key = getenv("SECRET_KEY")
+      if secret_key:
+        return secret_key
+    except EnvironmentError as e:
+      print(e)
+    try:
+      with open(self._config_file, "r") as fr:
+        env_credentials = json.load(fr)
+        secret_key = env_credentials.get("SECRET_KEY")
+        if secret_key:
+          return secret_key
         else:
           raise KeyError(f"the key 'SECRET_KEY' not found in credentials")
-      except FileNotFoundError:
-        print(f"`{self._config_file}` file not found")
-      except PermissionError:
-        print(f"{self._config_file}: You do have the privilesge to open rhis file: file permission denied")
-      except json.JSONDecodeError:
+    except FileNotFoundError:
+      print(f"`{self._config_file}` file not found")
+    except PermissionError:
+      print(f"{self._config_file}: You do have the privilesge to open rhis file: file permission denied")
+    except json.JSONDecodeError:
         print(f"{self._config_file} is not a valid json file")
-      except Exception as e:
-        print(f"An error occurred while trying to load this file... : {e}]")
-    if not SECRET_KEY:
-      print(f"Cannot load enviroments variables")
-      return
-    return SECRET_KEY
+    except Exception as e:
+      print(f"An error occurred while trying to load this file...")
+    return None
 
 
   def extract_token(self, request):
@@ -61,7 +61,12 @@ class BearerAuth(Auth):
     if not token_header:
       return None
 
-    jwt_token = token_header.split("Bearer ")[1]
+    try:
+      jwt_token = token_header.split(" ")[1]
+      if token_header.split(" ")[0] != "Bearer":
+        return "jwt_token has no Bearer prefix: Error!"
+    except IndexError:
+      return "Authorization header must have at least 2 units of length"
     if not jwt_token or type(jwt_token) is not str:
       return None
 
@@ -75,6 +80,7 @@ class BearerAuth(Auth):
       return None
     try:
       jwt_decoded = jwt.decode(jwt_token, key=self.SECRET_KEY, algorithms=['HS384'])
+      print(jwt_decoded)
       return jwt_decoded
     except jwt.exceptions.DecodeError:
       return None
@@ -83,8 +89,10 @@ class BearerAuth(Auth):
     """
     extract user credentials from a jwt_decoded token
     """
+    if jwt_decoded == None:
+      jwt_decoded = {}
     if len(jwt_decoded) == 0:
-      return None
+      return (None, None)
 
     email, password = jwt_decoded.get("email"), jwt_decoded.get("password")
     return (email, password)
@@ -108,5 +116,6 @@ class BearerAuth(Auth):
     jwt_token = self.extract_token(request)
     jwt_decoded = self.decode_token(jwt_token)
     credentials = self.extract_user_credentials(jwt_decoded)
-    user = self.extract_user_from_credentials(credentials)
+    email, password = credentials
+    user = self.extract_user_from_credentials(email, password)
     return user
