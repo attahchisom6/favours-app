@@ -93,3 +93,13 @@ class User(BaseModel, Base):
       return self.first_name
     else:
       return f"{self.first_name} {self.last_name}"
+
+  @classmethod
+  def count(cls):
+    """
+    count the number of objects the user has
+    """
+    count = 0
+    if cls is None:
+      return count
+    return models.storage.count(cls)
