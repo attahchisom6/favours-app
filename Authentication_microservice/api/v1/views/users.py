@@ -26,4 +26,4 @@ def get_all_users():
             res = None
     
     if res is not None:
-        print(res.json()
+        print(res.json())
