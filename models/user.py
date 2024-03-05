@@ -52,10 +52,13 @@ class User(BaseModel, Base):
     # Note we call a property method without parenthesis
     if self.password is None:
       return False
-    if type(self.password) is bytes:
-      self.password = self.password.decode("utf-8")
 
-    return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
+    if type(self.password) is bytes:
+      stored_password = self.password.decode("utf-8")
+    else:
+      stored_password = self.password
+
+    return bcrypt.checkpw(password.encode("utf-8"), stored_password.encode("utf-8"))
 
   @classmethod
   def search(cls, attributes: dict = {}) -> List[TypeVar("User")]:
