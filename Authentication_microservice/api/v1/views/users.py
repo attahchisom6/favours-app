@@ -11,7 +11,7 @@ import requests
 file_url = "0.0.0.0:5000"
 db_url = "0.0.0.0:5001"
 
-@app_views("/users", methods=["GET"], strict_slashesFalse)
+@app_views("/users", methods=["GET"], strict_slashes=False)
 def get_all_users():
     """
     return the list of all users in the database
