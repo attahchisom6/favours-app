@@ -7,7 +7,7 @@ from Authentication_microservice.api.v1.auth.bearer_auth import BearerAuth
 import jwt
 import bcrypt
 
-kwargs = {"first_name": "Okechukwu", "last_name": "Nwanna", "email": "oke@nna.com", "_password": "127oke"}
+kwargs = {"first_name": "Okechukwu", "last_name": "Nwanna", "email": "oke@nna.com", "password": "127oke"}
 
 u = User(**kwargs)
 u.save()
