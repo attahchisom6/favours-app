@@ -53,7 +53,7 @@ class User(BaseModel, Base):
     if self.password is None:
       return False
     if type(self.password) is bytes:
-      self.password = str(self.passeord)
+      self.password = str(self.password)
 
     return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
