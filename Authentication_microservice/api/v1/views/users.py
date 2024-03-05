@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""
+handle user related operations using RESTFUL API APPROACH
+"""
+from Authentication_microservice.api.v1.views import app_views
+from models.user import User
+from flask import jsonify, make_response, abort
+import requests
+
+
+file_url = "0.0.0.0:5000"
+db_url = "0.0.0.0:5001"
+
+@app_views("/users", methods=["GET"], strict_slashesFalse)
+def get_all_users():
+    """
+    return the list of all users in the database
+    """
+    res = None
+    try:
+        res = requests.get(f"{file_url}/objects?cls=User")
+    except:
+        try:
+            res = requests.get(f"{db_url}/objects/User")
+        except:
+            res = None
+    
+    if res is not None:
+        print(res.json()
