@@ -53,7 +53,7 @@ class User(BaseModel, Base):
     if self.password is None:
       return False
 
-    return bcrypt.checkpw(password.encode("utf-8"), self.password)
+    return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
   @classmethod
   def search(cls, attributes: dict = {}) -> List[TypeVar("User")]:
