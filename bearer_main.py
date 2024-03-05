@@ -21,7 +21,6 @@ print(u.is_valid_password("127oke"))
 print(u.email)
 print(u.password)
 print(u.display_name())
-assert u.password == bcrypt.hashpw("127oke".encode("utf-8"), bcrypt.gensalt())
 
 jwt_encoded = jwt.encode(kwargs, key=b.load_from_env_or_file(), algorithm="HS384")
 if jwt_encoded:
