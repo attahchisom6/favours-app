@@ -52,6 +52,8 @@ class User(BaseModel, Base):
     # Note we call a property method without parenthesis
     if self.password is None:
       return False
+    if type(self.password) is bytes:
+      self.password = str(self.passeord)
 
     return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
