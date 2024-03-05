@@ -74,7 +74,7 @@ class BearerAuth(Auth):
     if jwt_token is None or type(jwt_token) is not str:
       return None
     try:
-      jwt_decoded = jwt.decode(jwt_token, "SECRET", algorithms=['HS384'])
+      jwt_decoded = jwt.decode(jwt_token, key=self.SECRET_KEY, algorithms=['HS384'])
       return jwt_decoded
     except jwt.exceptions.DecodeError:
       return None
@@ -90,7 +90,7 @@ class BearerAuth(Auth):
     return (email, password)
 
   def extract_user_from_credentials(self, email: str = None, password: str = None) -> TypeVar("User"):
-    if not email or password:
+    if not email or not password:
       return None
 
     if type(email) is not str or type(password) is not str:
