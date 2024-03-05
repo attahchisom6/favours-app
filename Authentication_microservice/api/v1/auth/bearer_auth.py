@@ -97,7 +97,7 @@ class BearerAuth(Auth):
       return None
     user = User.search({"email": email})[0]
     if user is not None:
-      if user.is_valid_password(password.encode("utf-8")):
+      if user.is_valid_password(password):
         return user.to_dict()
     return None
   
