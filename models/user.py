@@ -87,4 +87,4 @@ class User(BaseModel, Base):
     elif not self.last_name:
       return self.first_name
     else:
-      return f"{self.first_,name} {self.last_name}"
+      return f"{self.first_name} {self.last_name}"
