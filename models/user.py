@@ -53,7 +53,6 @@ class User(BaseModel, Base):
     if self.password is None:
       return False
 
-    # encoded_stored_password = self.password.encode("utf-8")
     return bcrypt.checkpw(password.encode("utf-8"), self.password)
 
   @classmethod

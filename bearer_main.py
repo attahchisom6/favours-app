@@ -16,7 +16,7 @@ b = BearerAuth()
 print(b.extract_user_from_credentials(None, None))
 print(b.extract_user_from_credentials("pas", None))
 print(b.extract_user_from_credentials(u.email, "i5"))
-print(b.extract_user_from_credentials(u.email, u.password))
+print(b.extract_user_from_credentials(u.email, "127oke"))
 print(u.is_valid_password("127oke"))
 # assert u.password == bcrypt.hashpw("127oke".encode("utf-8"), bcrypt.gensalt())
 
