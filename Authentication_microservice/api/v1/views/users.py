@@ -21,7 +21,7 @@ def get_all_users():
         res = requests.get(f"{file_url}/objects?cls=User")
     except:
         try:
-            res = requests.get(f"{db_url}/objects/User")
+            res = requests.get(f"{db_url}/db_objects/User")
         except:
             res = None
     
