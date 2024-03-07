@@ -26,7 +26,7 @@ def get_all_users():
     return res.json()
 
 
-@app_view.route("/db_users", methods=["GET"], strict_slashes=False)
+@app_views.route("/db_users", methods=["GET"], strict_slashes=False)
 def get_db_users():
   """
   return all users from the database
