@@ -24,7 +24,7 @@ app = Flask(__name__)
 # storage.reload()
 
 
-@app.route("/objects", methods=["GET"], strict_slashes=False)
+@app.route("/db_objects", methods=["GET"], strict_slashes=False)
 def get_obj():
   args = request.args
   cls, id = args.get("cls"), args.get("id")
