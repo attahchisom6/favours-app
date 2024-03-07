@@ -13,14 +13,29 @@ db_url = "http://0.0.0.0:5001"
 
 @app_views.route("/users", methods=["GET"], strict_slashes=False)
 def get_all_users():
-    """
-    return the list of all users in the database
-    """
-    res = None
-    try:
-        res = requests.get(f"{file_url}/objects?cls=User")
-    except:
-      return None
+  """
+  return the list of all users in the database
+  """
+  res = None
+  try:
+    res = requests.get(f"{file_url}/objects?cls=User")
+  except:
+    return None
     
-    if res is not None:
-        return res.json()
+  if res is not None:
+    return res.json()
+
+
+@app_view.route("/db_users", methods=["GET"], strict_slashes=False)
+def get_db_users():
+  """
+  return all users from the database
+  """
+  res = None
+  try:
+    res = requests.get(f"{db_url}/db_objects/User")
+  except:
+    res = None
+
+  if res is not None:
+    return res.json()
