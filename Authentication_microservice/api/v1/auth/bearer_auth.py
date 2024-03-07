@@ -5,7 +5,7 @@ Bearer Authentication
 from Authentication_microservice.api.v1.auth.auth import Auth
 from flask import request
 import jwt
-import json
+import json 
 from os import getenv
 from models.user import User
 from typing import List, Dict, TypeVar, Tuple, Optional
