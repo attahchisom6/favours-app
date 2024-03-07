@@ -20,10 +20,7 @@ def get_all_users():
     try:
         res = requests.get(f"{file_url}/objects?cls=User")
     except:
-        try:
-            res = requests.get(f"{db_url}/db_objects/User")
-        except:
-            res = None
+      return None
     
     if res is not None:
         return res.json()
