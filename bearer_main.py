@@ -2,6 +2,7 @@
 """"
 test the vearer auth class
 """
+from models import storage
 from models.user import User
 from Authentication_microservice.api.v1.auth.bearer_auth import BearerAuth
 import jwt

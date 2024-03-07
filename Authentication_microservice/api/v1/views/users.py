@@ -14,7 +14,7 @@ db_url = "http://0.0.0.0:5001"
 @app_views.route("/users", methods=["GET"], strict_slashes=False)
 def get_all_users():
   """
-  return the list of all users in the database
+  return the list of all users in the file storage
   """
   res = None
   try:
@@ -33,7 +33,7 @@ def get_db_users():
   """
   res = None
   try:
-    res = requests.get(f"{db_url}/db_objects/User")
+    res = requests.get(f"{db_url}/db_objects?cls=User")
   except:
     res = None
 
