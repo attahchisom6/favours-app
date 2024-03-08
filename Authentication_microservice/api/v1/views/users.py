@@ -5,6 +5,7 @@ handle user related operations using RESTFUL API APPROACH
 from Authentication_microservice.api.v1.views import app_views
 from models.user import User
 from flask import jsonify, make_response, abort
+from typing import Dict
 import requests
 
 
@@ -56,10 +57,10 @@ def get_user(id):
     return res.json()
 
 
-@app_views.route("/db_users", methods=["GET"], strict_slashes=False)
-def get_db_user():
+@app_views.route("/db_users/<id>", methods=["GET"], strict_slashes=False)
+def get_db_user(id):
   """
-  return all users from the database
+  returns a user from the database
   """
   res = None
   try:
@@ -69,3 +70,27 @@ def get_db_user():
 
   if res is not None:
     return res.json()
+  
+@app_views.route("/users/<data>", methods=["POST"], strict_slashes=False)
+def create_user(data: Dict):
+  """
+  creates a user and store in the file
+  """
+  if not isinstance(dict, data):
+    return jsonify({"messsage": "This endpoint requires object of type dict"})
+  res = None
+  try:
+    res =  requests.post(f"{file_url}/create/User", data)
+  except:
+    res = None
+
+    if res is not None:
+      return res.json()
+    
+@app_views.route("/db_users/<data>", method=["POST"], strict_slashes=False)
+def create_db_user(data: Dict):
+  """
+  creates a user and store in the database
+  """
+  if not isinstance(dict, data):
+    return jsonify({"message": "This endpoint requires object of type dict"})
