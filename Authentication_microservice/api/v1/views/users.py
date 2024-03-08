@@ -39,3 +39,33 @@ def get_db_users():
 
   if res is not None:
     return res.json()
+
+
+@app_views.route("/users/<id>", methods=["GET"], strict_slashes=False)
+def get_user(id):
+  """
+  return a given users from the filestorage
+  """
+  res = None
+  try:
+    res = requests.get(f"{file_url}/objects?cls=User&id={id}")
+  except:
+    res = None
+
+  if res is not None:
+    return res.json()
+
+
+@app_views.route("/db_users", methods=["GET"], strict_slashes=False)
+def get_db_user():
+  """
+  return all users from the database
+  """
+  res = None
+  try:
+    res = requests.get(f"{db_url}/db_objects?cls=User&id={id}")
+  except:
+    res = None
+
+  if res is not None:
+    return res.json()
