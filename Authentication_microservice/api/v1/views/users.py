@@ -80,8 +80,8 @@ def create_user():
   """
   data = request.data
 
-  if not isinstance(data, dict):
-    return jsonify({"messsage": "This endpoint requires nonempty object of type dict"}), 400
+  """if not isinstance(data, dict):
+    return jsonify({"messsage": "This endpoint requires nonempty object of type dict"}), 400"""
   res = None
   try:
     res =  requests.post(f"{file_url}/create/User", json=data)
