@@ -25,7 +25,7 @@ def get_jwt_from_payload():
   except Exception as e:
     return f"error reading from the database: {e}"
 
-  email, password = user.get("email"), user.get("password")
+  email, password = user.get("email"), user.get("_password")
   if email and password:
     from Authentication_microservice.api.v1.auth.bearer_auth import BearerAuth
     b = BearerAuth()
