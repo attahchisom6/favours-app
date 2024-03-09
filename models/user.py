@@ -113,6 +113,6 @@ class User(BaseModel, Base):
       existing_users = User.search({"email": self.email})
       if existing_users:
         for user in existing_users:
-          if user.email != self.email:
+          if user.id != self.id:
             return
     super().save()
