@@ -21,7 +21,7 @@ def get_jwt_from_payload():
   try:
     users = User.search({"id": user_id})
     if users is not None:
-      user = users[0].to_dict()
+      user = users[0]
   except Exception as e:
     return f"error reading from the database: {e}"
 
