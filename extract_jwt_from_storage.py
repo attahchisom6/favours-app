@@ -3,24 +3,27 @@
 extract a jwt pay load from storage
 """
 from models.user import User
+import os
 from os import getenv
 import jwt
 
-def print_jwt_from_payload():
+def get_jwt_from_payload():
   """
   this function prints a jwt encoding of user credentials
   """
   try:
-    id = getenv("id")
-  except EnvironmentError:
-    return "provide an id for the user"
+    user_id = os.environ.get("id")
+    if not user_id:
+      raise KeyError("No user id provided! pls provide one")
+  except KeyError as e:
+    return f"\{Error: {e}\}"
 
   try:
-    user = User.search({"id": id})
-    if user is not None:
-      user = user.to_dict()
+    users = User.search({"id": user_id})
+    if users is not None:
+      user = user[0].to_dict()
   except Exception as e:
-    print(f"error reading from the database: {e}")
+    return f"error reading from the database: {e}"
 
   email, password = user.email, user.password
   if email and password:
@@ -29,10 +32,15 @@ def print_jwt_from_payload():
     try:
       jwt_encoding = jwt.encode({"email": email, "password": password}, key=b.SECRET_KEY, algorithm="HS384")
       if jwt_encoding:
-        print(jwt_encoding)
+        return jwt_encoding
       else:
         print("No encoding")
     except Exception as e:
-      print(f"encoding failed: {e}")
+      return f"encoding failed: {e}"
   else:
-    print("neither email nor password can be none")
+    return "neither email nor password can be none"
+
+
+if __name__ == "__main__":
+  jwt_encoding = get_jwt__from_payload()
+  print(jwt_encoding)
