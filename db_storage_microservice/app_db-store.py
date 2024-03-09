@@ -44,7 +44,7 @@ def get_obj():
   if all_objs:
     return jsonify([{key: obj.to_dict()} for key, obj in all_objs.items()])
   else:
-    return jsonify({"message": f"No objects fpund"}), 404
+    return jsonify({"message": f"No objects found"}), 404
 
 
 @app.route("/count", methods=["GET"], strict_slashes=False)
