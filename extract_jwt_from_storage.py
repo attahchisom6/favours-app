@@ -2,7 +2,7 @@
 """
 extract a jwt pay load from storage
 """
-from models.User import User
+from models.user import User
 from os import getenv
 import jwt
 
