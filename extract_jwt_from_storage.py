@@ -21,11 +21,11 @@ def get_jwt_from_payload():
   try:
     users = User.search({"id": user_id})
     if users is not None:
-      user = users[0]
+      user = users[0].to_dict()
   except Exception as e:
     return f"error reading from the database: {e}"
 
-  email, password = user.email, user.password
+  email, password = user.get("email"), user.get("password")
   if email and password:
     from Authentication_microservice.api.v1.auth.bearer_auth import BearerAuth
     b = BearerAuth()
