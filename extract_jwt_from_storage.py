@@ -16,7 +16,7 @@ def get_jwt_from_payload():
     if not user_id:
       raise KeyError("No user id provided! pls provide one")
   except KeyError as e:
-    return f"\{Error: {e}\}"
+    return f"Error: {e}"
 
   try:
     users = User.search({"id": user_id})
