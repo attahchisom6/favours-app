@@ -92,7 +92,7 @@ def create_user():
     return jsonify(res.json()), res.status_code 
 
 
-@app_views.route("/db_users", method=["POST"], strict_slashes=False)
+@app_views.route("/db_users", methods=["POST"], strict_slashes=False)
 def create_db_user():
   """
   creates a user and store in the database
