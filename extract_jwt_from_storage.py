@@ -34,7 +34,7 @@ def get_jwt_from_payload():
       if jwt_encoding:
         return jwt_encoding
       else:
-        print("No encoding")
+        return "No encoding"
     except Exception as e:
       return f"encoding failed: {e}"
   else:
@@ -42,5 +42,5 @@ def get_jwt_from_payload():
 
 
 if __name__ == "__main__":
-  jwt_encoding = get_jwt__from_payload()
+  jwt_encoding = get_jwt_from_payload()
   print(jwt_encoding)
