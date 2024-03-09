@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """"
-test the vearer auth class
+test the bearer auth class
 """
 from models import storage
 from models.user import User
@@ -26,5 +26,6 @@ print(u.display_name())
 jwt_encoded = jwt.encode(kwargs, key=b.load_from_env_or_file(), algorithm="HS384")
 if jwt_encoded:
   print(jwt_encoded)
+  print(b.extract_user_credentials(b.decode_token(jwt_encoded)))
 else:
   print("jwt encode failed")

@@ -80,7 +80,6 @@ class BearerAuth(Auth):
       return None
     try:
       jwt_decoded = jwt.decode(jwt_token, key=self.SECRET_KEY, algorithms=['HS384'])
-      print(jwt_decoded)
       return jwt_decoded
     except jwt.exceptions.DecodeError:
       return None
@@ -106,7 +105,7 @@ class BearerAuth(Auth):
     user = User.search({"email": email})[0]
     if user is not None:
       if user.is_valid_password(password):
-        return user.to_dict()
+        return user.to_dict(fs_indicator=1)
     return None
   
   def current_user(self, request=None) -> TypeVar("User"):

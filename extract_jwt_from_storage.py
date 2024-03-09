@@ -7,6 +7,8 @@ import os
 from os import getenv
 import jwt
 
+keyy = None
+
 def get_jwt_from_payload():
   """
   this function prints a jwt encoding of user credentials
@@ -21,16 +23,19 @@ def get_jwt_from_payload():
   try:
     users = User.search({"id": user_id})
     if users is not None:
-      user = users[0].to_dict()
+      user = users[0]
   except Exception as e:
     return f"error reading from the database: {e}"
 
-  email, password = user.get("email"), user.get("_password")
+  email, password = user.email, user.password
   if email and password:
     from Authentication_microservice.api.v1.auth.bearer_auth import BearerAuth
     b = BearerAuth()
+    keyy = b.SECRET_KEY
+    print(f"SECRET KEY: {keyy}")
+    print(f"user: {user.to_dict(fs_indicator=1)}")
     try:
-      jwt_encoding = jwt.encode({"email": email, "password": password}, key=b.SECRET_KEY, algorithm="HS384")
+      jwt_encoding = jwt.encode(user.to_dict(fs_indicator=1), key=b.SECRET_KEY, algorithm="HS384")
       if jwt_encoding:
         return jwt_encoding
       else:
@@ -44,3 +49,4 @@ def get_jwt_from_payload():
 if __name__ == "__main__":
   jwt_encoding = get_jwt_from_payload()
   print(jwt_encoding)
+  print(f"SECRET KEY: {keyy}")
