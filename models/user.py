@@ -110,7 +110,7 @@ class User(BaseModel, Base):
     override the save method
     """
     if self.email:
-      existing_users = User.search({"email": email})
+      existing_users = User.search({"email": self.email})
       if existing_users:
         raise ValueError("email already exists")
     super().save()
