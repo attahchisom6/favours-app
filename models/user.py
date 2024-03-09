@@ -103,3 +103,14 @@ class User(BaseModel, Base):
     if cls is None:
       return count
     return models.storage.count(cls)
+
+
+  def save(self):
+    """
+    override the save method
+    """
+    if self.email:
+      existing_users = User.search({"email": email})
+      if existing_users:
+        raise ValueError("email already exists")
+    super().save()
