@@ -30,6 +30,8 @@ def print_jwt_from_payload():
       jwt_encoding = jwt.encode({"email": email, "password": password}, key=b.SECRET_KEY, algorithm="HS384")
       if jwt_encoding:
         print(jwt_encoding)
+      else:
+        print("No encoding")
     except Exception as e:
       print(f"encoding failed: {e}")
   else:
