@@ -105,7 +105,7 @@ class User(BaseModel, Base):
     return models.storage.count(cls)
 
 
-  # def save(self):
+  def save(self):
     """
     override the save method
     """
