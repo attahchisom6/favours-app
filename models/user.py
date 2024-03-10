@@ -109,8 +109,10 @@ class User(BaseModel, Base):
     """
     override the save method
     """
-    """if self.email:
+    if self.email:
       existing_users = User.search({"email": self.email})
       if existing_users:
-        return
-    super().save()"""
+        for user in existing_users:
+          if user.id != self.id:
+            return
+    super().save()
