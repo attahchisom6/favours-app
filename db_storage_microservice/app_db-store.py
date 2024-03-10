@@ -99,7 +99,7 @@ def update_object(cls, id):
     else:
       return jsonify({"message": "No data provided, provide data to update"}), 400
   else:
-    return jsonify({"message": "No object in Database availaible for update"}), 404
+    return jsonifyl({"message": "No object in Database availaible for update"}), 404
 
 @app.route("/delete/<cls>/<id>", methods=["DELETE"], strict_slashes=False)
 def delete_object(cls, id):
