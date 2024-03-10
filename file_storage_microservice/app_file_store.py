@@ -52,7 +52,7 @@ def create_instance(cls):
         Cl =  classes[key]
         instance = Cl(**data)
         instance.save()
-        return jsonify({"message": f"{cls} instance created successfully"}), 201
+        return jsonify({"message": f"{cls} instance {instance.id} created successfully"}), 201
   else:
     return jsonify({"message": "Cannot create an instance, no data provided"}),201
   

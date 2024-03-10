@@ -76,7 +76,7 @@ def create_object(cls):
         Cl = classes[key]
         instance = Cl(**data)
         instance.save()
-        return jsonify({"message": "instance created successfully"}), 201
+        return jsonify({"message": f"{cls} instance {instance.id} created successfully"}), 201
   else:
     return jsonify({"message": "instance creation failed, no data provided!"})
 
