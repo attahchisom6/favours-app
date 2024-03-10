@@ -37,7 +37,7 @@ def get_db_users():
   try:
     res = requests.get(f"{db_url}/db_objects?cls=User")
   except:
-    res = None
+    return None
 
   if res is not None:
     return res.json()
