@@ -78,10 +78,10 @@ def create_user():
   """
   creates a user and store in the file
   """
-  data = request.data
+  data = request.get_json()
 
-  """if not isinstance(data, dict):
-    return jsonify({"messsage": "This endpoint requires nonempty object of type dict"}), 400"""
+  if not isinstance(data, dict):
+    return jsonify({"messsage": "This endpoint requires nonempty object of type dict"}), 400
   res = None
   try:
     res =  requests.post(f"{file_url}/create/User", json=data)
@@ -97,7 +97,7 @@ def create_db_user():
   """
   creates a user and store in the database
   """
-  data = request.data
+  data = request.get_json()
 
   if not isinstance(data, dict):
     return jsonify({"message": "This endpoint requires nonempty object of type dict"}), 400
@@ -118,7 +118,7 @@ def update_user_in_file(id):
   """
   updates user instances stored in file
   """
-  data = request.data
+  data = request.get_json()
 
   if not isinstance(data, dict):
     return jsonify({"message": "This endpoint requires nonempty objects of type dict"}), 400
@@ -139,7 +139,7 @@ def update_user_in_db(id):
   """
   updates user instances stored in file
   """
-  data = request.data
+  data = request.get_json()
 
   if not isinstance(data, dict):
     return jsonify({"message": "This endpoint requires nonempty objects of type dict"}), 400
