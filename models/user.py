@@ -114,7 +114,7 @@ class User(BaseModel, Base):
     if existing_users:
       print(f"existing_users: {existing_users}")
       for user in existing_users:
-        if user.id != self.id:
+        if user.id == self.id:
           print(f"self: {self}")
           print(f"user: {user}")
           return
