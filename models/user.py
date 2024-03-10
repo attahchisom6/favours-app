@@ -105,12 +105,12 @@ class User(BaseModel, Base):
     return models.storage.count(cls)
 
 
-  def save(self):
+  # def save(self):
     """
     override the save method
     """
-    if self.email:
+    """if self.email:
       existing_users = User.search({"email": self.email})
       if existing_users:
         return
-    super().save()
+    super().save()"""
