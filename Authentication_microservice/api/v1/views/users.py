@@ -163,7 +163,7 @@ def delete_obj_from_file(id):
   try:
     res = request.delete(f"{file_url}/User/{id}")
   except Exception as e:
-    return jsonify({"message": "Could not delete the item of concern: {str(e)}"})
+    return jsonify({"message": f"Could not delete the item of concern: {str(e)}"})
   
   if res is not None:
     return jsonify(res.json()), res.status_code
@@ -178,7 +178,7 @@ def delete_obj_from_db(id):
   try:
     res = request.delete(f"{db_url}/User/{id}")
   except Exception as e:
-    return jsonify({"message": "Could not delete the item of concern: {str(e)}"})
+    return jsonify({"message": f"Could not delete the item of concern: {str(e)}"})
 
   if res is not None:
     return jsonify(res.json()), res.status_code
