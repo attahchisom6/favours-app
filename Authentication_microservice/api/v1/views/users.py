@@ -107,7 +107,7 @@ def create_db_user():
     res = requests.post(f"{db_url}/create/User", json=data)
     print(f"({res.text()} {res.status_code})")
   except Exception as e:
-    return jsonify({"message": "Failecd to create a user instance for the database: {str(e)}"}), 500
+    return jsonify({"message": f"Failecd to create a user instance for the database: {str(e)}"}), 500
 
   if res is not None:
     return jsonify(res.json()), res.status_code
