@@ -112,11 +112,6 @@ class User(BaseModel, Base):
     if self.email:
       existing_users = User.search({"email": self.email})
       if existing_users:
-          print(f"existing_users: {existing_users}")
-      """for user in existing_users:
-        if user.id == self.id:
-          print(f"self: {self}")
-          print(f"user: {user}")
-          return"""
+        print(f"existing_users: {existing_users}")
         return
     super().save()
