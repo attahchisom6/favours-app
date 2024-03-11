@@ -35,7 +35,7 @@ def get_jwt_from_payload():
     print(f"SECRET KEY: {keyy}")
     print(f"user: {user.to_dict(fs_indicator=1)}")
     try:
-      jwt_encoding = jwt.encode(user.to_dict(fs_indicator=1), key=b.SECRET_KEY, algorithm="HS384")
+      jwt_encoding = jwt.encode({user.email, }, key=b.SECRET_KEY, algorithm="HS384")
       if jwt_encoding:
         return jwt_encoding
       else:
