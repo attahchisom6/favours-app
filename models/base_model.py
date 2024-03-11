@@ -98,3 +98,21 @@ class BaseModel:
     delete current instance from storage
     """
     models.storage.delete(self)
+
+
+  @classmethod
+  def search(cls, attributes: dict = {}) -> List[TypeVar("User")]:
+    """
+    searches and gets a class object bassed on the attributes
+    """
+    all_objs = models.storage.all(cls)
+    def _search(obj):
+      if len(attributes) == 0:
+        return True
+
+      for key, value in attributes.items():
+        if getattr(obj, key) != value:
+          return False
+      return True
+
+    return list(filter(_search, all_objs.values()))

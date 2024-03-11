@@ -60,22 +60,6 @@ class User(BaseModel, Base):
 
     return bcrypt.checkpw(password.encode("utf-8"), stored_password.encode("utf-8"))
 
-  @classmethod
-  def search(cls, attributes: dict = {}) -> List[TypeVar("User")]:
-    """
-    searches and gets a user object bassed on the attributes
-    """
-    all_objs = models.storage.all(cls)
-    def _search(obj):
-      if len(attributes) == 0:
-        return True
-
-      for key, value in attributes.items():
-        if getattr(obj, key) != value:
-          return False
-      return True
-
-    return list(filter(_search, all_objs.values()))
 
   def display_name(self):
     """
