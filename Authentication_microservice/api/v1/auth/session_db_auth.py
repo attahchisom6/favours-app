@@ -69,13 +69,12 @@ class(SessionExpAuth):
     if session_id:
       return False
 
-    # Note we could have searched with session_id but chose to search
-    # with user_id because we want to ensure the session has not expired b3fore being destroyed
-    user_id = self.user_for_session_id(session_id)
+    user_id = self.user_id_for_session_id(session_id)
     if user_id is None:
       return False
 
-    user_session = UserSession.search({"user_id": user_id})[0]
+    # we search with user_id to ensure the current session has not expired b4 its destroyed
+    user_session = UserSession.search({"user_id": user_id, "session_id": session_id})[0]
     if user_session is None:
       return False
 
