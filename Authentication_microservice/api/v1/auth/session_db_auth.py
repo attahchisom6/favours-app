@@ -5,6 +5,7 @@ This module defines and stores users session to the database
 from Authentication_microservice.api.v1.auth.session_db_auth import SessionExpAuth
 from datetime import datetime, timedelta
 from models.user import User
+from models.user_session import UserSession
 
 
 class SessionDBAuth(SessionExpAuth):

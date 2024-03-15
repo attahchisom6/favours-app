@@ -42,7 +42,7 @@ def login():
   return jsonify({"error": "wrong password"}), 401
 
 
-@app.route("/session_auth/logout", methods=["DELETE"], strict_slashes=False)
+@app_views.route("/session_auth/logout", methods=["DELETE"], strict_slashes=False)
 def logout():
   """
   logs a user out from a session

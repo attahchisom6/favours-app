@@ -7,6 +7,7 @@ from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import uuid
+from typing import List, TypeVar
 
 if models.storage_t == "db":
   Base = declarative_base()

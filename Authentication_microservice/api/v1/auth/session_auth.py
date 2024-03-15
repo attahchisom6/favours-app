@@ -58,7 +58,7 @@ class SessionAuth(Auth):
     if request is None:
       flag = False
 
-    session_id = self.session_cookie(request):
+    session_id = self.session_cookie(request)
     if session_id is None or session_id not in self.user_id_by_session_id:
       flag = False
 
