@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from models.user import User
 
 
-class(SessionExpAuth):
+class SessionDBAuth(SessionExpAuth):
   """
   define the logic/algorithm in which our session_id and user_id are saved
   """
@@ -43,17 +43,23 @@ class(SessionExpAuth):
     if session_id is None:
       return None
 
-    if session_id not in self.user_dict_by_session_id:
+    user_session = UserSession.search({"session_id": session_id})[0]
+    if not user_session:
       return None
 
-    user_data = self.user_dict_by_session_id[session_id]
-    user_id = user_data.get("user_id")
-    created_at = user_data.get("created_at")
+    user_data = user_session.to_dict()
+    user_id = user_data["user_id"]
+    created_at = user_data["created_at"]
+
     if self.session_duration is None or created_at is None:
       return user_id
 
     if self.session_duration + created_at < datetime.utcnow():
-      self.user_dict_by_session_id.pop(session_id)
+      try:
+        user_session.delete()
+        UserSession.save()
+      except:
+        return None
 
     return user_id
 
@@ -82,6 +88,7 @@ class(SessionExpAuth):
       user_session.delete()
       UserSession.save()
     except Exception as e:
-      return f"Unable to remove user_session instance {user_session.id} from db: {e}"
+      print(f"Unable to remove user_session instance {user_session.id} from db: {e}")
+      return False
 
     return True
