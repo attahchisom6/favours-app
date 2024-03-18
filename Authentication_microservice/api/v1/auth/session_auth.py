@@ -2,6 +2,7 @@
 """
 This modules handles session authentication
 """
+from models.user import User
 from Authentication_microservice.api.v1.auth.auth import Auth
 import uuid
 
@@ -47,7 +48,13 @@ class SessionAuth(Auth):
     if not session_id:
       return None
     user_id = self.user_id_for_session_id(session_id)
-    return User.get(user_id)
+    if not user_id:
+      return None
+    
+    user = User.search({"id": user_id})[0]
+    if user:
+      return user.to_dict()
+    return None
 
 
   def destroy_session(self, request) -> bool:

@@ -64,7 +64,8 @@ def manage_authorized_routes():
       "/api/v1/status/",
       "/api/v1/stats/",
       "/api/v1/unauthorized/",
-      "/api/v1/forbidden/"
+      "/api/v1/forbidden/",
+      "/api/v1/session_auth/login"
     ]
   if auth is not None and auth.authorized_paths(request.path, excluded_paths) is True:
     if not auth.authorization_header(request) and not auth.session_cookie(request):

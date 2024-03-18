@@ -105,13 +105,16 @@ class BearerAuth(Auth):
     user = User.search({"email": email})[0]
     if user is not None:
       if user.is_valid_password(password):
-        return user.to_dict(fs_indicator=1)
+        return user.to_dict()
     return None
   
   def current_user(self, request=None) -> TypeVar("User"):
     """
     return the current authorized user
     """
+    if request is None:
+      return None
+  
     jwt_token = self.extract_token(request)
     jwt_decoded = self.decode_token(jwt_token)
     credentials = self.extract_user_credentials(jwt_decoded)

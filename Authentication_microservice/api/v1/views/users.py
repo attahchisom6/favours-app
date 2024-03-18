@@ -51,7 +51,7 @@ def get_user(id):
   if id == "me":
     if request.current_user is None:
       abort(404)
-    return jsonify(request.current_user.to_dict()), 200
+    return jsonify(request.current_user), 200
 
   res = None
   try:
@@ -71,7 +71,7 @@ def get_db_user(id):
   if id == "me":
     if request.current_user is None:
       abort(404)
-    return jsonify(request.current_user.to_dict()), 201
+    return jsonify(request.current_user), 201
 
   res = None
   try:

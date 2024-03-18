@@ -8,22 +8,21 @@ from models.user import User
 from os import getenv
 
 
-@app_views.route("/session_auth/login", methods=["GET"], strict_slashes=False)
+@app_views.route("/session_auth/login", methods=["POST"], strict_slashes=False)
 def login():
   """
   create a session for a valid logged in user
   """
   from Authentication_microservice.api.v1.app_auth import auth
-
   data = request.form
 
   email, password = data.get("email"), data.get("password")
 
   if not email:
-    return jsonify({"error": "email nissing!"}), 400
+    return jsonify({"error": "email missing!"}), 400
 
   if not password:
-    return jsonify({"message": "password missing!"}), 400
+    return jsonify({"error": "password missing!"}), 400
 
   users = User.search({"email": email})
   if not users:
