@@ -4,7 +4,7 @@ handle user related operations using RESTFUL API APPROACH
 """
 from Authentication_microservice.api.v1.views import app_views
 from models.user import User
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from typing import Dict
 import requests
 
@@ -48,11 +48,16 @@ def get_user(id):
   """
   return a given users from the filestorage
   """
+  if id == "me":
+    if request.current_user is None:
+      abort(404)
+    return jsonify(request.current_user.to_dict()), 200
+
   res = None
   try:
     res = requests.get(f"{file_url}/objects?cls=User&id={id}")
   except:
-    res = None
+    abort(404)
 
   if res is not None:
     return res.json()
@@ -63,6 +68,11 @@ def get_db_user(id):
   """
   returns a user from the database
   """
+  if id == "me":
+    if request.current_user is None:
+      abort(404)
+    return jsonify(request.current_user.to_dict()), 201
+
   res = None
   try:
     res = requests.get(f"{db_url}/db_objects?cls=User&id={id}")
