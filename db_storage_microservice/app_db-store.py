@@ -114,6 +114,21 @@ def delete_object(cls, id):
   else:
     return jsonify({"message": "Cannot delete objet. bject not found!"}), 404
 
+@app.route("/search/<cls>", strict_slashes=False, methods=["POST"])
+def search(cls):
+  """
+  search a class for instances with matching attributes
+  """
+  data = request.json
+
+  if not data or type(data) is not dict:
+    return jsonify({"message": "pass a dictionary of search criteria"}), 400
+
+  instances = DBStorage.search_db(cls, data)
+  if instances is None:
+    return jsonify({"message": f"No {cls} instances found in Db"}), 400
+  return jsonify([instance for instance in instances]), 200
+
 
 if __name__ == "__main__":
   if models.storage_t == "db":

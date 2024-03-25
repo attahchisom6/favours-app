@@ -123,3 +123,10 @@ class DBStorage:
     """
     db_objects = self.all(cls)
     return len(db_objects)
+
+  @classmethod
+  def search_db(cls, attributes={}):
+    """
+    return the instances with the ptovided attributes
+    """
+    return cls.__session.query(cls).filter_by(**attributes).all()

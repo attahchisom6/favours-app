@@ -15,6 +15,7 @@ def login():
   """
   from Authentication_microservice.api.v1.app_auth import auth
   data = request.form
+  url = "http://0.0.0.0:5001/search/User"
 
   email, password = data.get("email"), data.get("password")
 
@@ -24,7 +25,9 @@ def login():
   if not password:
     return jsonify({"error": "password missing!"}), 400
 
-  users = User.search({"email": email})
+  file_users = User.search({"email": email})
+  db_users = requests.post(url, json={"email": email})
+  users = file_users + db_users
   if not users:
     return jsonify({"error": "No user found for this email"}), 404
 
