@@ -6,7 +6,22 @@ from flask import make_response, abort, request, jsonify
 from Authentication_microservice.api.v1.views import app_views
 from models.user import User
 from os import getenv
+import requests
 
+
+def deserialiize_response(data):
+  """
+  deserialize data from an api payload back to
+  user instances
+  """
+  if not data:
+    return None
+  if isinstance(data, list):
+    return [User(**user_data) for user_data in data]
+  elif isinstance(data, dict):
+    return User(**data)
+  else:
+    return None
 
 @app_views.route("/session_auth/login", methods=["POST"], strict_slashes=False)
 def login():
@@ -25,15 +40,22 @@ def login():
   if not password:
     return jsonify({"error": "password missing!"}), 400
 
-  file_users = User.search({"email": email})
-  db_users = requests.post(url, json={"email": email})
-  users = file_users + db_users
+  res = requests.post(url, json={"email": email})
+  data = res.json()
+  db_user_dict = {user.id: user for user in deserialiize_response(data)}
+  print(f"db_users: {db_user_dict}")
+
+  file_user_dict = {user.id: user for user in User.search({"email": email})}
+  print(f"file users: {file_user_dict}")
+  
+  users = list(file_user_dict.values()) + list(db_user_dict.values())
+  print(f"users: {[user.to_dict(fs_indicator=1) for user in users]}")
   if not users:
     return jsonify({"error": "No user found for this email"}), 404
 
   for user in users:
     if user.is_valid_password(password):
-      response = make_response(user.to_dict())
+      response = make_response(user.to_dict(fs_indicator=1))
       session_id = auth.create_session(user.id)
       SESSION_NAME = getenv("SESSION_NAME")
       if SESSION_NAME is None:
