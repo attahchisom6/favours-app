@@ -51,7 +51,7 @@ def login():
   print(f"file users: {file_users}")
 
   for user in db_users:
-    user_dict   [user.id] = user
+    user_dict[user.id] = user
   for user in file_users:
     if user.id not in user_dict:
       user_dict[user.id] = user
@@ -61,6 +61,7 @@ def login():
   if not users:
     return jsonify({"error": "No user found for this email"}), 404
 
+  res = []
   for user in users:
     if user.is_valid_password(password):
       response = make_response(user.to_dict(fs_indicator=1))
@@ -70,7 +71,10 @@ def login():
         SESSION_NAME = "DEFAULT"
       response.set_cookie(SESSION_NAME, session_id)
 
-      return response
+      res.append(response)
+  
+  if res:
+    return res
   return jsonify({"error": "wrong password"}), 401
 
 
