@@ -42,13 +42,21 @@ def login():
 
   res = requests.post(url, json={"email": email})
   data = res.json()
-  db_user_dict = {user.id: user for user in deserialiize_response(data)}
-  print(f"db_users: {db_user_dict}")
+  user_dict = {}
 
-  file_user_dict = {user.id: user for user in User.search({"email": email})}
-  print(f"file users: {file_user_dict}")
+  db_users = deserialiize_response(data)
+  print(f"db_users: {db_users}")
+
+  file_users = User.search({"email": email})
+  print(f"file users: {file_users}")
+
+  for user in db_users:
+    user_dict   [user.id] = user
+  for user in file_users:
+    if user.id not in user_dict:
+      user_dict[user.id] = user
   
-  users = list(file_user_dict.values()) + list(db_user_dict.values())
+  users = list(user_dict.values())
   print(f"users: {[user.to_dict(fs_indicator=1) for user in users]}")
   if not users:
     return jsonify({"error": "No user found for this email"}), 404
