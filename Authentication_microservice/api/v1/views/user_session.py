@@ -61,20 +61,20 @@ def login():
   if not users:
     return jsonify({"error": "No user found for this email"}), 404
 
-  res = []
+  resp = []
   for user in users:
     if user.is_valid_password(password):
-      response = make_response(user.to_dict(fs_indicator=1))
+      response = make_response(user.to_dict())
       session_id = auth.create_session(user.id)
       SESSION_NAME = getenv("SESSION_NAME")
       if SESSION_NAME is None:
         SESSION_NAME = "DEFAULT"
       response.set_cookie(SESSION_NAME, session_id)
 
-      res.append(response)
+      resp.append(response)
   
-  if res:
-    return res
+  if resp:
+    return jsonify([r.get_json() for r in resp])
   return jsonify({"error": "wrong password"}), 401
 
 
