@@ -81,7 +81,7 @@ def login():
 @app_views.route("/session_auth/logout", methods=["DELETE"], strict_slashes=False)
 def logout():
   """
-  logs a user out from a session
+  logs a user out from a sessionn
   """
   from Authentication_microservice.api.v1.app_auth import auth
 
