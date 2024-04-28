@@ -3,7 +3,7 @@
 Manage session expiration auth
 """
 from datetime import datetime, timedelta
-from Authentication_microservice.api.v1.auth.auth import SessionAuth
+from Authentication_microservice.api.v1.auth.session_auth import SessionAuth
 from os import getenv
 
 class SessionExpAuth(SessionAuth):

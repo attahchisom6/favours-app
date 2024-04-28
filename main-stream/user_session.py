@@ -9,7 +9,7 @@ from os import getenv
 import requests
 
 
-def deserialize_response(data):
+def deserialiize_response(data):
   """
   deserialize data from an api payload back to
   user instances
@@ -40,33 +40,39 @@ def login():
   if not password:
     return jsonify({"error": "password missing!"}), 400
 
-  try:
-    res = requests.post(url, json={"email": email})
-    db_data = res.json()
-    users = deserialize_response(db_data)
-    print(f"db_users: {users}")
-  except Exception as e:
-    print(f"could not fetch data from DB: {e}")
-    users = None
+  res = requests.post(url, json={"email": email})
+  data = res.json()
+  user_dict = {}
 
-  if users is None:
-    try:
-      users = User.search({"email": email})
-      print(f"file users: {users}")
-    except Exception as e:
-      return jsonify({"Error": f"No user found for this email, {e}"})
+  db_users = deserialiize_response(data)
+  print(f"db_users: {db_users}")
+
+  file_users = User.search({"email": email})
+  print(f"file users: {file_users}")
+
+  for user in db_users:
+    user_dict[user.id] = user
+  for user in file_users:
+    if user.id not in user_dict:
+      user_dict[user.id] = user
   
-  if users is None:
-    return jsonify({"Error": "No user found for this email"})
+  users = list(user_dict.values())
+  print(f"users: {[user.to_dict(fs_indicator=1) for user in users]}")
+  if not users:
+    return jsonify({"error": "No user found for this email"}), 404
 
+  resp = []
   for user in users:
     if user.is_valid_password(password):
-      response = make_response(jsonify(user.to_dict(fs_indicator=1)))
-      SESSION_NAME = getenv("SESSION_NAME", "DEFAULT")
-      session_id = auth.create_session(user.id)
-      response.set_cookie(SESSION_NAME, session_id)
-      return response
-      
+      resp.append(user)
+  
+  if resp:
+    response = make_response(jsonify([user.to_dict() for user in resp]))
+    session_id = auth.create_session(resp[0].id)
+    print(f"session-id: {session_id}")
+    SESSION_NAME = getenv("SESSION_NAME", "DEFAULT")
+    response.set_cookie(SESSION_NAME, session_id)
+    return response
   return jsonify({"error": "wrong password"}), 401
 
 

@@ -5,7 +5,6 @@ Database storage microservive to manage db operation (manage api's that routes t
 from flask import Flask, jsonify, request
 import models
 from models.engine.db_storage import DBStorage, classes
-from models.base_model import BaseModel, Base
 from os import getenv
 from models import storage
 
