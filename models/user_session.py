@@ -12,7 +12,7 @@ class UserSession(BaseModel, Base):
   User session and attributes initialized here
   """
   if models.storage_t == "db":
-    __tablename__    = "users_session"
+    __tablename__    = "user_sessions"
     user_id = Column(String(128), nullable=False)
     session_id = Column(String(128), nullable=False)
   else:

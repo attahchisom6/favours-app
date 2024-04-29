@@ -64,7 +64,10 @@ def login():
       response = make_response(jsonify(user.to_dict(fs_indicator=1)))
       SESSION_NAME = getenv("SESSION_NAME", "DEFAULT")
       session_id = auth.create_session(user.id)
-      response.set_cookie(SESSION_NAME, session_id)
+      if session_id:
+        response.set_cookie(SESSION_NAME, session_id)
+      else:
+        response = make_response(jsonify({"error": "failed to create session"}), 500)
       return response
       
   return jsonify({"error": "wrong password"}), 401
