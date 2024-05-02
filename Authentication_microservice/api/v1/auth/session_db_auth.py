@@ -6,6 +6,7 @@ from Authentication_microservice.api.v1.auth.session_exp_auth import SessionExpA
 from datetime import datetime, timedelta
 from models.user import User
 from models.user_session import UserSession
+from utils.storage_interactor import storage_interactor
 import requests
 
 
@@ -64,8 +65,8 @@ class SessionDBAuth(SessionExpAuth):
       user_session.save()
     else:
       res = requests.post(urll, json=kwargs)
-      #if res.status_code == 201:
-        #print(res.json())
+      if res.status_code == 201:
+        print(res.json())
 
     return session_id
 
@@ -76,9 +77,11 @@ class SessionDBAuth(SessionExpAuth):
     """
     if session_id is None:
       return None
+    
+    url = "http://0.0.0.0/5001/search/UserSession"
 
-    user_session = UserSession.search({"session_id": session_id})[0]
-    if not user_session:
+    user_session = storage_interactor(url, UserSession, method="post", data={"session_id": session_id})
+    if user_session is None:
       return None
 
     user_data = user_session.to_dict()
@@ -92,8 +95,15 @@ class SessionDBAuth(SessionExpAuth):
       try:
         user_session.delete()
         UserSession.save()
-      except:
-        return None
+      except  Exception as e:
+        print(f"could not delete use_session to file: {e}")
+
+      try:
+        res = requests.put(url=f"http://0.0.0.0:5001/delete/UserSession/{user_session.id}")
+        if res.status_code == 201:
+          print(res.json())
+      except Exception as e:
+        print(f"could not delete object from db: {e}")
 
     return user_id
 

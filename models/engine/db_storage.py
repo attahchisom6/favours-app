@@ -4,6 +4,7 @@ Database interaction and Management module
 """
 from models.base_model import BaseModel, Base
 from models.user import User
+from models.user_session import UserSession
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import getenv
@@ -11,7 +12,8 @@ from os import getenv
 
 
 classes = {
-    "User": User
+    "User": User,
+    "UserSession": UserSession
   }
 
 

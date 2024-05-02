@@ -5,12 +5,13 @@ serializes our data and stores it in a file
 import models
 from models.base_model import BaseModel
 import json
-import jwt
 from models.user import User
+from models.user_session import UserSession
 
 classes = {
+    "BaseModel": BaseModel,
     "User": User,
-    "BaseModel": BaseModel
+    "UserSession": UserSession
   }
 
 
