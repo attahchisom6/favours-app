@@ -5,7 +5,6 @@ Database storage microservive to manage db operation (manage api's that routes t
 from flask import Flask, jsonify, request
 import models
 from models.engine.db_storage import DBStorage, classes
-from models.base_model import BaseModel, Base
 from os import getenv
 from models import storage
 
@@ -78,7 +77,7 @@ def create_object(cls):
         instance.save()
         return jsonify({"message": f"{cls} instance {instance.id} created successfully"}), 201
   else:
-    return jsonify({"message": "instance creation failed, no data provided!"})
+    return jsonify({"message": "instance creation failed, no data provided!"}), 400
 
 
 @app.route("/update/<cls>/<id>", methods=["PUT"], strict_slashes=False)

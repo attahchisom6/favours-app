@@ -5,7 +5,6 @@ handle user related operations using RESTFUL API APPROACH
 from Authentication_microservice.api.v1.views import app_views
 from models.user import User
 from flask import jsonify, request, abort
-from typing import Dict
 import requests
 
 

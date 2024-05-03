@@ -1,10 +1,11 @@
-#!/usr/bjn/env python3
+                                         #!/usr/bjn/env python3
 """
 This modules handles session authentication
 """
 from models.user import User
 from Authentication_microservice.api.v1.auth.auth import Auth
 import uuid
+import requests             
 
 
 class SessionAuth(Auth):
@@ -48,13 +49,25 @@ class SessionAuth(Auth):
     if not session_id:
       return None
     user_id = self.user_id_for_session_id(session_id)
+    print(f"user id: {user_id}")
     if not user_id:
       return None
     
-    user = User.search({"id": user_id})[0]
-    if user:
-      return user.to_dict()
-    return None
+    try:
+      user = User.search({"id": user_id})[0]
+      print(f"file user: {user}")
+    except:
+      try:
+        from Authentication_microservice.api.v1.views.user_session import deserialize_response
+        url = "http://0.0.0.0:5001/search/User"
+        res = requests.post(url, json={"id": user_id})
+        db_data = res.json()
+        user = deserialize_response(db_data)[0]
+        print(f"db user: {user}")
+      except Exception as e:
+        return f"No current user: {e}"
+  
+    return user.to_dict()
 
 
   def destroy_session(self, request) -> bool:

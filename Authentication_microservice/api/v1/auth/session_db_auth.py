@@ -2,10 +2,11 @@
 """
 This module defines and stores users session to the database
 """
-from Authentication_microservice.api.v1.auth.session_db_auth import SessionExpAuth
+from Authentication_microservice.api.v1.auth.session_exp_auth import SessionExpAuth
 from datetime import datetime, timedelta
 from models.user import User
 from models.user_session import UserSession
+import requests
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -19,20 +20,52 @@ class SessionDBAuth(SessionExpAuth):
     if user_id is None:
       return None
 
-    user = User.search({"id": user_id})[0]
+    is_file, is_db = False, False
+    url = "http://0.0.0.0:5001/search/User"
+
+    try:
+      user = User.search({"id": user_id})[0]
+      if user is not None:
+        is_file = True
+        is_db = False
+        print(f"file user: {user}")
+    except Exception as e:
+      print(f"could not find a file user: {e}")
+      user = None
+
+    if user is None:
+      try:
+        from Authentication_microservice.api.v1.views.user_session import deserialize_response
+        res = requests.post(url, json={"id": user_id})
+        db_data = res.json()[0]
+        print(f"db_data: {db_data}")
+        user = deserialize_response(db_data)
+        if user is not None:
+          is_File = False
+          is_db = True
+          print(f"db_user: {user}")
+      except Exception as e:
+        print(f"could not find a DB user: {e}")
+
     if user is None:
       return None
 
-    session_id = super.create_session(user.id)
+    session_id = super().create_session(user.id)
     if session_id is None:
       return None
 
+    urll = "http://0.0.0.0:5001/create/UserSession"
     kwargs = {
         "user_id": user.id,
         "session_id": session_id   
       }
     user_session = UserSession(**kwargs)
-    user_session.save()
+    if is_file:
+      user_session.save()
+    else:
+      res = requests.post(urll, json=kwargs)
+      #if res.status_code == 201:
+        #print(res.json())
 
     return session_id
 
