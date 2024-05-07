@@ -4,24 +4,8 @@ handles sessions management
 """
 from flask import make_response, abort, request, jsonify
 from Authentication_microservice.api.v1.views import app_views
-from models.user import User
 from os import getenv
-import requests
-
-
-def deserialize_response(data):
-  """
-  deserialize data from an api payload back to
-  user instances
-  """
-  if not data:
-    return None
-  if isinstance(data, list):
-    return [User(**user_data) for user_data in data]
-  elif isinstance(data, dict):
-    return User(**data)
-  else:
-    return None
+from utils.storage_interactor import storage_interactor
 
 @app_views.route("/session_auth/login", methods=["POST"], strict_slashes=False)
 def login():
@@ -40,22 +24,13 @@ def login():
   if not password:
     return jsonify({"error": "password missing!"}), 400
 
-  try:
-    res = requests.post(url, json={"email": email})
-    db_data = res.json()
-    users = deserialize_response(db_data)
-    print(f"db_users: {users}")
-  except Exception as e:
-    print(f"could not fetch data from DB: {e}")
-    users = None
+  users = storage_interactor(
+      url=url,
+      clss="User",
+      method="POST",
+      data={"email": email}
+  )[0]
 
-  if users is None:
-    try:
-      users = User.search({"email": email})
-      print(f"file users: {users}")
-    except Exception as e:
-      return jsonify({"Error": f"No user found for this email, {e}"})
-  
   if users is None:
     return jsonify({"Error": "No user found for this email"})
 

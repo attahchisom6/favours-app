@@ -3,8 +3,7 @@
 This module defines and stores users session to the database
 """
 from Authentication_microservice.api.v1.auth.session_exp_auth import SessionExpAuth
-from datetime import datetime, timedelta
-from models.user import User
+from datetime import datetime
 from models.user_session import UserSession
 from utils.storage_interactor import storage_interactor
 import requests
@@ -20,37 +19,18 @@ class SessionDBAuth(SessionExpAuth):
     """
     if user_id is None:
       return None
-
-    is_file, is_db = False, False
+    
     url = "http://0.0.0.0:5001/search/User"
 
-    try:
-      user = User.search({"id": user_id})[0]
-      if user is not None:
-        is_file = True
-        is_db = False
-        print(f"file user: {user}")
-    except Exception as e:
-      print(f"could not find a file user: {e}")
-      user = None
+    users, is_db, is_file = storage_interactor(
+      url=url, clss="User", method="POST",
+      data={"id": user_id}
+    )
 
-    if user is None:
-      try:
-        from Authentication_microservice.api.v1.views.user_session import deserialize_response
-        res = requests.post(url, json={"id": user_id})
-        db_data = res.json()[0]
-        print(f"db_data: {db_data}")
-        user = deserialize_response(db_data)
-        if user is not None:
-          is_File = False
-          is_db = True
-          print(f"db_user: {user}")
-      except Exception as e:
-        print(f"could not find a DB user: {e}")
-
-    if user is None:
+    if users is None or users == []:
       return None
-
+    
+    user = users[0]
     session_id = super().create_session(user.id)
     if session_id is None:
       return None
@@ -63,10 +43,10 @@ class SessionDBAuth(SessionExpAuth):
     user_session = UserSession(**kwargs)
     if is_file:
       user_session.save()
-    else:
+    elif is_db:
       res = requests.post(urll, json=kwargs)
-      if res.status_code == 201:
-        print(res.json())
+      if res.status_code == 200:
+        print(f"db response {res.json()}")
 
     return session_id
 
@@ -78,15 +58,21 @@ class SessionDBAuth(SessionExpAuth):
     if session_id is None:
       return None
     
-    url = "http://0.0.0.0/5001/search/UserSession"
+    url = "http://0.0.0.0:5001/search/UserSession"
 
-    user_session = storage_interactor(url, UserSession, method="post", data={"session_id": session_id})
-    if user_session is None:
+    user_sessions, _, _ = storage_interactor(
+        url=url,
+        clss="UserSession",
+        method="POST",
+        data={"session_id": session_id}
+      )
+    if user_sessions is None or user_sessions == []:
       return None
+    user_session = user_sessions[0]
+    print(f"user_session_here: {user_session}")
 
-    user_data = user_session.to_dict()
-    user_id = user_data["user_id"]
-    created_at = user_data["created_at"]
+    user_id = user_session.user_id
+    created_at = user_session.created_at
 
     if self.session_duration is None or created_at is None:
       return user_id
@@ -94,16 +80,16 @@ class SessionDBAuth(SessionExpAuth):
     if self.session_duration + created_at < datetime.utcnow():
       try:
         user_session.delete()
-        UserSession.save()
       except  Exception as e:
-        print(f"could not delete use_session to file: {e}")
+        print(f"could not delete use_session object from file: {e}")
 
-      try:
-        res = requests.put(url=f"http://0.0.0.0:5001/delete/UserSession/{user_session.id}")
-        if res.status_code == 201:
-          print(res.json())
-      except Exception as e:
-        print(f"could not delete object from db: {e}")
+      if user_session:
+        try:
+          res = requests.delete(url=f"http://0.0.0.0:5001/delete/UserSession/{user_session.id}")
+          if res.status_code == 200:
+            print(res.json())
+        except Exception as e:
+          print(f"could not delete user_session object from db: {e}")
 
     return user_id
 
@@ -116,7 +102,7 @@ class SessionDBAuth(SessionExpAuth):
       return False
 
     session_id = self.session_cookie(request)
-    if session_id:
+    if session_id is None:
       return False
 
     user_id = self.user_id_for_session_id(session_id)
@@ -124,15 +110,28 @@ class SessionDBAuth(SessionExpAuth):
       return False
 
     # we search with user_id to ensure the current session has not expired b4 its destroyed
-    user_session = UserSession.search({"user_id": user_id, "session_id": session_id})[0]
-    if user_session is None:
+    url = "http://0.0.0.0:5001/search/UserSession"
+
+    user_sessions, is_db, is_file = storage_interactor(
+        url=url,
+        clss="UserSession",
+        method="POST",
+        data={"user_id": user_id, "session_id": session_id}
+      )
+    if user_sessions is None:
       return False
+    user_session = user_sessions[0]
 
     try:
-      user_session.delete()
-      UserSession.save()
-    except Exception as e:
-      print(f"Unable to remove user_session instance {user_session.id} from db: {e}")
+      if is_file:
+        user_session.delete()
+      elif is_db:
+        url = f"http://0.0.0.0:5001/delete/UserSession/{user_session.id}"
+        res = requests.delete(url=url)
+        if res.status_code == 200:
+          print(f"deleting responde: {res.json()}")
+      return True     
+    except  Exception as e:
+      print(f"could not delete use_session object from storage: {e}")
+      print(f"is_file: {is_file}, is_db: {is_db}")
       return False
-
-    return True

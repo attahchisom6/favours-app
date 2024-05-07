@@ -4,6 +4,7 @@ create a console to interact with eah unit or microservice
 """
 from models.base_model import BaseModel
 from models.user import User
+from models.user_session import UserSession
 import cmd
 # from file_storage_microservice.app_file_store import storage
 from models import storage
@@ -16,6 +17,7 @@ import importlib
 classes = {
     "BaseModel": BaseModel,
     "User": User,
+    "UserSession": UserSession,
   }
 
 Err = {
@@ -176,9 +178,16 @@ class MicroServices(cmd.Cmd):
       return False
 
     if id and cls_name:
-      instance = storage.get(cls_name, id)
+      if id == "all":
+        instance = storage.get(cls_name)
+      else:
+        instance = storage.get(cls_name, id)
       if instance:
-        storage.delete(instance)
+        if isinstance(instance, list):
+          for obj in instance:
+            storage.delete(obj)
+        else:
+          storage.delete(instance)
       else:
         print(Err.get("instance_missing"))
       storage.save()
@@ -317,6 +326,42 @@ class MicroServices(cmd.Cmd):
         print(f"reloaded module {module.__name__} successfully")
       except Exception as e:
         print(f"Cannot reload {module} module: {e}")
+        
+  def do_search(delf, arg):
+    """
+    search a given user object based on its   attribute
+    """
+    try:
+      args = arg.split()
+      cls_name = args[0].strip()
+      if cls_name and cls_name not in classes:
+        print(Err.get("exist"))
+        return False
+      try:
+        attr_name = strip_quotes(args[1].strip())
+        if attr_name:
+          if not hasattr(classes[cls_name](), attr_name):
+              print(f"invalid attribute: '{attr_name}'")
+              return False
+          try:
+            attr_value = strip_quotes(args[2].strip())
+          except IndexError:
+            print(Err.get("attr_value"))
+            return False
+          try:
+            instance = classes[cls_name].search({attr_name: attr_value})[0]
+            if instance:
+              print(instance.to_dict())
+          except Exception as e:
+            print(f"{Err.get('attr_value')}: {e}")
+            return False
+        else:
+          print(Err.get("attr_value"))
+      except IndexError:
+        print(Err.get("attr_name"))
+    except IndexError:
+      print(Err.get("class_missing"))
+      return False
 
 
   def default(self, arg):
@@ -331,6 +376,7 @@ class MicroServices(cmd.Cmd):
       <class_name>.update(<id>, <**kwargs i.e dict_representation>)
       <class_name>.count()
       File.reload(module1, module2, ...)
+      <class_name>.search(<**kwargs i.e dict_representation>)
     """
     valid_commands = {
         "all": self.do_all,
@@ -339,7 +385,8 @@ class MicroServices(cmd.Cmd):
         "destroy": self.do_destroy,
         "update": self.do_update,
         "count": self.do_count,
-        "reload": self.do_reload
+        "reload": self.do_reload,
+        "search": self.do_search
       }
 
     line = ""
@@ -371,7 +418,7 @@ class MicroServices(cmd.Cmd):
         if command == "show" or command == "destroy":
           line = f"{cls_name} {id_or_dict}"
         
-        elif command == "update":
+        elif command == "update" or command == "search":
           id_or_dict_match = re.match('^(.+), (\{.*\})$', id_or_dict)
           if id_or_dict_match:
             id, str_dict = id_or_dict_match.groups()

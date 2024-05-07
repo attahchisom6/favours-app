@@ -4,6 +4,8 @@ aoi's defined here doesn't need authorizarion
 """
 from flask import abort, jsonify
 from Authentication_microservice.api.v1.views import app_views
+from models.user import User
+
 
 @app_views.route("/status", methods=["GET"], strict_slashes=False)
 def get_status():
