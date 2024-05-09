@@ -4,6 +4,7 @@ Database interaction and Management module
 """
 from models.base_model import BaseModel, Base
 from models.user import User
+from models.user_session import UserSession
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import getenv
@@ -11,7 +12,8 @@ from os import getenv
 
 
 classes = {
-    "User": User
+    "User": User,
+    "UserSession": UserSession
   }
 
 
@@ -125,10 +127,10 @@ class DBStorage:
     return len(db_objects)
 
   # @classmethod
-  def search_db(self, clss, attributes={}):
+  # def search_db(self, clss, attributes={}):
     """
     return the instances with the ptovided attributes
     """
-    if classes[clss] is not None:
+    """if classes[clss] is not None:
       return self.__session.query(classes[clss]).filter_by(**attributes).all()
-    return None
+    return None"""

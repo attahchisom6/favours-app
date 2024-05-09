@@ -5,12 +5,13 @@ serializes our data and stores it in a file
 import models
 from models.base_model import BaseModel
 import json
-import jwt
 from models.user import User
+from models.user_session import UserSession
 
 classes = {
+    "BaseModel": BaseModel,
     "User": User,
-    "BaseModel": BaseModel
+    "UserSession": UserSession
   }
 
 
@@ -97,10 +98,16 @@ class FileStorage:
     """
     method to return an obj in objects_data if present based on the class and id
     """
-    if cls and id:
+    if cls:
+      objs     = []
       for key, obj in self.__objects_data.items():
-        if key.startswith(cls) and obj.id == id:
-          return obj
+        if key.startswith(cls):
+          if id is not None and obj.id == id:
+            return obj
+          if id is not None and obj.id != id:
+            return None
+          objs.append(obj)
+      return objs
     return None
 
   def count(self, cls=None):

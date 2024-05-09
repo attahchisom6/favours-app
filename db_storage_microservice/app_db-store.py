@@ -122,8 +122,12 @@ def search(clss):
 
   if not data or type(data) is not dict:
     return jsonify({"message": "pass a dictionary of search criteria"}), 400
+  
+  if clss not in classes:
+    return jsonify({"message": f"Invalid class passed at endpoint: {clss}"}), 400
 
-  instances = storage.search_db(clss, data)
+  # instances = storage.search_db(clss, data)
+  instances = classes[clss].search(data)
   if instances is None:
     return jsonify({"message": f"No {clss} instances found in Db"}), 400
   return jsonify([instance.to_dict(fs_indicator=1) for instance in instances])

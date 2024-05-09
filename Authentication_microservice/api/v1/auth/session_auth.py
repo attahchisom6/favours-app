@@ -2,10 +2,9 @@
 """
 This modules handles session authentication
 """
-from models.user import User
 from Authentication_microservice.api.v1.auth.auth import Auth
 import uuid
-import requests             
+from utils.storage_interactor import storage_interactor            
 
 
 class SessionAuth(Auth):
@@ -44,6 +43,8 @@ class SessionAuth(Auth):
     """
     if request is None:
       return None
+    
+    url = "http://0.0.0.0:5001/search/User"
 
     session_id = self.session_cookie(request)
     if not session_id:
@@ -53,19 +54,16 @@ class SessionAuth(Auth):
     if not user_id:
       return None
     
-    try:
-      user = User.search({"id": user_id})[0]
-      print(f"file user: {user}")
-    except:
-      try:
-        from Authentication_microservice.api.v1.views.user_session import deserialize_response
-        url = "http://0.0.0.0:5001/search/User"
-        res = requests.post(url, json={"id": user_id})
-        db_data = res.json()
-        user = deserialize_response(db_data)[0]
-        print(f"db user: {user}")
-      except Exception as e:
-        return f"No current user: {e}"
+    users = storage_interactor(
+        url=url,
+        clss="User",
+        method="POST",
+        data={"id": user_id}
+    )[0]
+
+    if users is None:
+      return None
+    user = users[0]
   
     return user.to_dict()
 
