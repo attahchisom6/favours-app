@@ -18,7 +18,7 @@ public function up()
         $table->string('name');
         $table->integer('category_id');
         $table->string('slug');
-        $table->decimal('price', 8, 2);
+        $table->decimal('price', 8, 2);  
         $table->text('description');
         $table->boolean('is_visible');
         $table->boolean('is_approved');
