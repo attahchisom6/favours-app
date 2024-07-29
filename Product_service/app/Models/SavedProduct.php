@@ -14,4 +14,14 @@ class SavedProduct extends Model
         'product_id',
         'is_saved'
     ];
+
+    protected $casts = [
+        'user_id' => 'integer',
+        'is_saved' => 'boolean'
+    ];
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

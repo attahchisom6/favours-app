@@ -28,4 +28,6 @@ Route::group(['prefix' => 'v1'], function() {
     Route::apiResource('categories', CategoryController::class);
 
     Route::apiResource('saved-products', SavedProductController::class);
+
+    Route::post('saved-products/{user_id}/{product}', [SavedProductController::class, 'store']);
 });
