@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Category;
 
-use App\Http\Controllers\Controller;
+use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -12,15 +15,31 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Successful',
+            'data' => $categories,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $validated['slug'] = Str::slug($validated['name']);
+
+        $category = Category::create($validated);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Categories created successfully',
+            'data' => $category
+        ], 201);
     }
 
     /**
