@@ -17,11 +17,7 @@ class CategoryController extends Controller
     {
         $categories = Category::all();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Successful',
-            'data' => $categories,
-        ]);
+        return $this->success('Categories Successful', $categories);
     }
 
     /**
@@ -35,11 +31,7 @@ class CategoryController extends Controller
 
         $category = Category::create($validated);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Categories created successfully',
-            'data' => $category
-        ], 201);
+        return $this->success('Categories created successfully', $category, 201);
     }
 
     /**
