@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Category\CategoryController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,4 +23,6 @@ Route::get('product/{slug}', [ProductController::class, 'a_product']);
 Route::put('updateProduct/{slug}', [ProductController::class, 'update']);
 
 
-
+Route::group(['prefix' => 'v1'], function() {
+    Route::apiResource('categories', CategoryController::class);
+});
