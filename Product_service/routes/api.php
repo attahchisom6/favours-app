@@ -22,4 +22,6 @@ Route::get('product/{slug}', [ProductController::class, 'a_product']);
 Route::put('updateProduct/{slug}', [ProductController::class, 'update']);
 
 
-
+Route::group(['prefix' => 'v1'], function() {
+    Route::apiResource('categories', CategoryController::class);
+});
