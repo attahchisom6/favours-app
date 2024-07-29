@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryResource;
 use App\Http\Requests\StoreCategoryRequest;
 
 class CategoryController extends Controller
@@ -17,7 +18,7 @@ class CategoryController extends Controller
     {
         $categories = Category::all();
 
-        return $this->success('Categories Successful', $categories);
+        return $this->success('Categories Successful', CategoryResource::collection($categories));
     }
 
     /**
@@ -31,7 +32,7 @@ class CategoryController extends Controller
 
         $category = Category::create($validated);
 
-        return $this->success('Categories created successfully', $category, 201);
+        return $this->success('Categories created successfully', new CategoryResource($category), 201);
     }
 
     /**
@@ -39,7 +40,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return $this->success('Category Retrieved Successfully.', $category);
+        return $this->success('Category Retrieved Successfully.', new CategoryResource($category));
     }
 
     /**
@@ -47,9 +48,13 @@ class CategoryController extends Controller
      */
     public function update(StoreCategoryRequest $request, Category $category)
     {
-        $category->update($request->validated());
+        $validated = $request->validated();
 
-        return $this->success('Category successfully updated.', $category);
+        $validated['slug'] = Str::slug($validated['name']);
+
+        $category->update($validated);
+
+        return $this->success('Category successfully updated.', new CategoryResource($category));
     }
 
     /**
